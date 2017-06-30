@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="lib" path="C:/Users/Siberian/workspace/Test/commons-codec-1.10.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Siberian/workspace/Test/commons-lang3-3.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Siberian/workspace/Test/guava-19.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Siberian/workspace/Test/jackson-annotations-2.7.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Siberian/workspace/Test/jackson-core-2.7.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Siberian/workspace/Test/jackson-databind-2.7.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Siberian/workspace/Test/slf4j-api-1.7.21.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Siberian/workspace/Test/slf4j-simple-1.7.21.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Siberian/workspace/Test/themoviedbapi-1.5.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Siberian/workspace/CIS_350_Project_Vanoostc_Schindler_Pelletier/commons-codec-1.10.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Siberian/workspace/CIS_350_Project_Vanoostc_Schindler_Pelletier/commons-lang3-3.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Siberian/workspace/CIS_350_Project_Vanoostc_Schindler_Pelletier/guava-19.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Siberian/workspace/CIS_350_Project_Vanoostc_Schindler_Pelletier/jackson-annotations-2.7.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Siberian/workspace/CIS_350_Project_Vanoostc_Schindler_Pelletier/jackson-core-2.7.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Siberian/workspace/CIS_350_Project_Vanoostc_Schindler_Pelletier/jackson-databind-2.7.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Siberian/workspace/CIS_350_Project_Vanoostc_Schindler_Pelletier/slf4j-api-1.7.21.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Siberian/workspace/CIS_350_Project_Vanoostc_Schindler_Pelletier/slf4j-simple-1.7.21.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Siberian/workspace/CIS_350_Project_Vanoostc_Schindler_Pelletier/themoviedbapi-1.5.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
