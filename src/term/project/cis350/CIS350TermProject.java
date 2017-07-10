@@ -15,6 +15,8 @@ import java.awt.Insets;
 import java.awt.Panel;
 import java.awt.TextArea;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -35,16 +37,16 @@ import javax.swing.WindowConstants;
 public class CIS350TermProject {
 	
 	static JFrame f;								// holds the main JFrame of the Application
-	static final int F_PADDING = 40;				// defines padding around 'f' JFrame
+	static final int F_PADDING = 40 /2;				// defines padding around 'f' JFrame
 	static JPanel p;								// This Panel holds the Arrow ICONS	
 	static JPanel p2;								// This Panel holds the comboBoxes and JButton
-	static final int P2_TOP_PAD = 800;				// Top Padding for 'P2' proper placement
+	static final int P2_TOP_PAD = 800 /2;				// Top Padding for 'P2' proper placement
 	static JLabel background;						// Object used to hold current movie poster displayed
 	static JLabel rightArrow;						// Holds the right arrow Icon image 
-	static final int RIGHT_ARROW_LEFT_PAD = 425;	// Controls Left Padding for proper Right Arrow icon placement  
+	static final int RIGHT_ARROW_LEFT_PAD = 425 /2;	// Controls Left Padding for proper Right Arrow icon placement  
 	static JLabel leftArrow;						// Holds the left arrow Icon image
-	static final int LEFT_ARROW_LEFT_PAD = -175;	// Controls Left Padding for proper Left Arrow icon placement
-	static final int LEFT_ARROW_RIGHT_PAD = 200;	// Controls Right Padding for proper Left Arrow icon placement
+	static final int LEFT_ARROW_LEFT_PAD = -175 /2;	// Controls Left Padding for proper Left Arrow icon placement
+	static final int LEFT_ARROW_RIGHT_PAD = 200 /2;	// Controls Right Padding for proper Left Arrow icon placement
 	static JComboBox genre;							// Holds genre related information for movie selection
 	static JComboBox era;							// Holds era related information for movie selection
 	static JComboBox othersRating;					// holds rating related information for movie selection
@@ -52,11 +54,11 @@ public class CIS350TermProject {
 	
 	static MovieList movieList;						// Object to initialize the MovieList Object
 	
-	static final int POSTERHEIGHT 	= 728 * 2;		// derived from standard insert 7.28" Height.
+	static final int POSTERHEIGHT 	= 728 * 2 /2;		// derived from standard insert 7.28" Height.
 	static final int HEIGHTFACTOR 	= 2;			// Used to scale preferred panel's height as needed
-	static final int POSTERWIDTH  	= 494 * 2;		// derived from standard insert 4.94" wide.'
+	static final int POSTERWIDTH  	= 494 * 2 /2;		// derived from standard insert 4.94" wide.'
 	static final int WIDTHFACTOR 	= 1;			// Used to scale preferred panel's width as needed
-	static final int CBFONTSIZE 	= 40;			// Default Font Size used 
+	static final int CBFONTSIZE 	= 40 /2;			// Default Font Size used 
 	static int maxStars;							// defines the max star rating for a movie.
 	static int minStars;							// defines the min star rating for a movie.
 	
@@ -158,6 +160,18 @@ public class CIS350TermProject {
 		//System.out.println(x + " , "  + y);
 	}
 	
+	static void getComboBoxClickInfo(ActionEvent e){
+		if(e.getSource() == era){
+			movieList.setEra( era.getSelectedItem().toString() );
+		}
+		if(e.getSource() == othersRating){
+			movieList.setEra( othersRating.getSelectedItem().toString() );
+		}
+		if(e.getSource() == genre){
+			movieList.setEra( genre.getSelectedItem().toString() );
+		}
+	}
+	
 	/*
 	 * initArrowPanel is used to generate the appropriate placement of
 	 * the arrow icon images within the application based on the desired
@@ -220,10 +234,29 @@ public class CIS350TermProject {
 	    genre = new JComboBox( movieList.genreList() );
 	    Font font = new Font((String) "", Font.PLAIN, CBFONTSIZE);
 	    genre.setFont(font);
+	    genre.addActionListener(new ActionListener (){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				getComboBoxClickInfo(e);
+			}
+	    });
 	    era = new JComboBox( movieList.eraList() );
 	    era.setFont(font);
+	    era.addActionListener(new ActionListener (){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				getComboBoxClickInfo(e);
+			}
+	    });
 	    othersRating = new JComboBox( movieList.ratingList() );
 	    othersRating.setFont(font);
+	    othersRating.addActionListener(new ActionListener (){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				getComboBoxClickInfo(e);
+			}
+	    });
 		
 	    getSuggestion =  new JButton("Get Movie");
 	    getSuggestion.setFont(new Font("", Font.PLAIN, CBFONTSIZE));

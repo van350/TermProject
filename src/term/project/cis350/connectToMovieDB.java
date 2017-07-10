@@ -25,8 +25,8 @@ public class connectToMovieDB {
 	private   SessionToken sessionToken;
 	
 	public connectToMovieDB() {
-		System.out.println("IN connect");;
-		tmdbApi = new TmdbApi("team api Key Here");
+		System.out.println("IN connect");
+		tmdbApi = new TmdbApi("978613ab37cca0d42531d612540d5fac");
 		
 		// certain methods in TMDb API require a session id as a parameter, so
 		// let's generate it and have it ready
@@ -51,7 +51,7 @@ public class connectToMovieDB {
 		// Method 1: Generating session id using API calls (requires username and password)
 		
 		TmdbAuthentication tmdbAuth = tmdbApi.getAuthentication();
-		TokenSession tokenSession = tmdbAuth.getSessionLogin("TeamUserName","TeamPassword");
+		TokenSession tokenSession = tmdbAuth.getSessionLogin("Schindld","CIS350supergroup");
 		System.out.println("Session ID: " + tokenSession.getSessionId());
 		SessionToken sessionToken = new SessionToken(tokenSession.getSessionId());
 		

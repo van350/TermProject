@@ -13,6 +13,14 @@ import javax.swing.JLabel;
 
 public class MovieList {
 	
+	private static final String DEF_ERA 	= "Pick By Era"; 
+	private static final String DEF_GENRE 	= "Pick By Genre";
+	private static final String DEF_RATING 	= "Pick By Rating";
+	
+	private static String curEra 		= DEF_ERA;
+	private static String curGenre	 	= DEF_GENRE;
+	private static String curRating		= DEF_RATING;
+	
 	// the current movie holds the movie that is 
 	// displayed on the screen OF COURSE I AM NOT
 	// SURE WHAT THE OBJECT FOR A MOVIE IS AT THE 
@@ -45,6 +53,14 @@ public class MovieList {
 		return getPosterAndSetCurMovie(desHeight, desWidth, true);
 	}
 	
+	/*
+	 * getPosterAndSetCurMovie()
+	 * 
+	 * @param desHeight is the desired height in which the poster should be scaled to 
+	 * @param desWidth is the desired width in which the poster should be scaled to 
+	 * @param isWatchSug is a bool that determines if the poster selection was the result
+	 * 			of a getMovie selections. 
+	 */
 	private ImageIcon getPosterAndSetCurMovie(int desHeight, int desWidth, boolean isWatchSug){
 		dWidth 	= desWidth;
 		dHeight 	= desHeight;
@@ -118,11 +134,23 @@ public class MovieList {
 		types.add("Action");
 		types.sort(String::compareToIgnoreCase);
 		
-		// this order makes sure 'All' is always the
+		// this order makes sure DEF_GENRE is always the
 		// first in the list. 
-		types.add(0,"Pick By Genre");
+		types.add(0,DEF_GENRE);
 		
 		return types.toArray(new String[types.size()]);
+	}
+	
+	public Boolean setGenre(String sentGenre){
+		System.out.println(sentGenre);
+		if(curGenre != sentGenre){
+			curGenre = sentGenre;
+			// here because the sent era was different 
+			// we need to update the search results to reflect
+			// this
+			return true;
+		}	// otherwise we do nothing. 
+		return false;
 	}
 	
 	public String[] eraList(){
@@ -137,15 +165,28 @@ public class MovieList {
 		era.add("2010's");
 		era.sort(String::compareToIgnoreCase);
 		
-		// this order makes sure 'All' is always the
+		// this order makes sure DEF_ERA is always the
 		// first in the list. 
-		era.add(0,"Pick By Era");
+		era.add(0,DEF_ERA);
 
 		for(int i = 0; i < era.size() ; i++){
 			System.out.println(era.get(i) + "\n");
 		}
 		return era.toArray(new String[era.size()]);
 	}
+	
+	public Boolean setEra(String sentEra){
+		System.out.println(sentEra);
+		if(curEra != sentEra){
+			curEra = sentEra;
+			// here because the sent era was different 
+			// we need to update the search results to reflect
+			// this
+			return true;
+		}	// otherwise we do nothing. 
+		return false;
+	}
+	
 	public String[] ratingList(){
 
 		ArrayList<String> rateList = new ArrayList<String>();
@@ -156,12 +197,25 @@ public class MovieList {
 		
 		rateList.sort(String::compareToIgnoreCase);
 		
-		// this order makes sure 'All' is always the
+		// this order makes sure DEF_RATING is always the
 		// first in the list. 
-		rateList.add(0,"Pick By Rating");
+		rateList.add(0,DEF_RATING);
 
 		return rateList.toArray(new String[rateList.size()]);
 	}
+
+	public Boolean setList(String sentRating){
+		System.out.println(sentRating);
+		if(curRating != sentRating){
+			curRating = sentRating;
+			// here because the sent era was different 
+			// we need to update the search results to reflect
+			// this
+			return true;
+		}	// otherwise we do nothing. 
+		return false;
+	}
+	
 	public int getMaxStars(){
 		return MAX_STARS;	
 	}
