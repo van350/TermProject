@@ -49,7 +49,7 @@ public class connectToMovieDB {
 		// There are two ways to generate a session id
 		
 		// Method 1: Generating session id using API calls (requires username and password)
-		
+
 		TmdbAuthentication tmdbAuth = tmdbApi.getAuthentication();
 		TokenSession tokenSession = tmdbAuth.getSessionLogin("Schindld","CIS350supergroup");
 		System.out.println("Session ID: " + tokenSession.getSessionId());

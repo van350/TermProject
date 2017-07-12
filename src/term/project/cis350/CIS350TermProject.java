@@ -67,6 +67,10 @@ public class CIS350TermProject {
 	 * initGUI is used to initiate the GUI associate with 
 	 * the FlixPix Application. 
 	 */
+	/**
+	 * initGUI() is used to initiate the components contained within this applications
+	 * JFrame. 
+	 */
 	private static void initGUI(){
 		
 		//Initiating the first movie poster
@@ -116,9 +120,14 @@ public class CIS350TermProject {
 	 * This function is used to initialize the movieList object as
 	 * well as gets this applications maxStar and minStar values 
 	 */
+	/**
+	 * initPeriphObj() is used to initiate other peripheral objects needed to properly
+	 * execute this application. As well as handle generating any class specific variables
+	 * needed from peripheral objects generated. 
+	 */
 	private static void initperiphObj(){
 		movieList = new MovieList();
-		maxStars = movieList.getMaxStars();
+		maxStars = movieList.getMaxStars();		
 		minStars = movieList.getMinStars();
 	}
 	
@@ -127,9 +136,15 @@ public class CIS350TermProject {
 	 * clicked and calls the movieList object as needed
 	 * to generate new movies to rate and suggestions for watching
 	 */
+	/**
+	 * getClickInfo(MouseEvent) is used to capture mouse clicks information and
+	 * execute calls to the movieList object in order to cause user input and reaction
+	 * to the application
+	 * 
+	 * @param e MouseEvent is used to determine what element of importance, if any, was clicked. 
+	 */
 	private static void getClickInfo(MouseEvent e){
-		//int x = e.getX();
-		//int y = e.getY();
+
 		if(e.getSource() == rightArrow){
 			//setting personal rating for currently displayed poster
 			// to the maximum star rating. 
@@ -149,9 +164,16 @@ public class CIS350TermProject {
 			//getting new background poster for rating. 
 			background = new JLabel( movieList.getMovieToWatch(POSTERHEIGHT, POSTERWIDTH) );
 		}
-		//System.out.println(x + " , "  + y);
+
 	}
 	
+	/**
+	 * getComboBoxClickInfo(ActionEvent) is used to capture combo box selections
+	 * and cause a reaction in the movieList object according the the combo box ActionEvent
+	 * that was generated.
+	 * 
+	 * @param e ActionEvent is used to determine what combo box entry was clicked.
+	 */
 	static void getComboBoxClickInfo(ActionEvent e){
 		if(e.getSource() == era){
 			movieList.setEra( era.getSelectedItem().toString() );
@@ -164,10 +186,9 @@ public class CIS350TermProject {
 		}
 	}
 	
-	/*
-	 * initArrowPanel is used to generate the appropriate placement of
-	 * the arrow icon images within the application based on the desired
-	 * poster width and height. 
+	/**
+	 * initArrowPanel() is used to generate and place the arrow icons on the application 
+	 * screen that are used to rate the current poster background. 
 	 */
 	private static void initArrowPanel(){
 		
@@ -207,9 +228,9 @@ public class CIS350TermProject {
       	f.add(p);
 	}
 	
-	/*
-	 * This function handles the initialization and placement of the 
-	 * ComboBoxes for this application. 
+	/**
+	 * initBottomElements() function is used to handle the initialization and placement
+	 * of the combo boxes for this application. 
 	 */
 	private static void initBottomElements(){
 		// setting the default vertical distance associated with the ComboBox options
