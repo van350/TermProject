@@ -1,7 +1,11 @@
 package term.project.cis350;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 
 import info.movito.themoviedbapi.TmdbAccount;
 import info.movito.themoviedbapi.TmdbApi;
@@ -23,13 +27,27 @@ import info.movito.themoviedbapi.model.people.PersonCrew;
 public class connectToMovieDB {
 	private   TmdbApi tmdbApi;
 	private   SessionToken sessionToken;
+	private ArrayList<String> list;
 	
 	public connectToMovieDB() {
 		System.out.println("IN connect");
-		tmdbApi = new TmdbApi("978613ab37cca0d42531d612540d5fac");
+		Scanner s;
+		try {
+			s = new Scanner(new File(System.getProperty("user.dir") + "/.api_un_pw"));
+			list = new ArrayList<String>();
+			while (s.hasNext()){
+			    list.add(s.next());
+			}
+			s.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Failed to open File\n");
+			e.printStackTrace();
+		}
+		tmdbApi = new TmdbApi(list.get(0));
 		
 		// certain methods in TMDb API require a session id as a parameter, so
-		// let's generate it and have it ready
+		// let's generate it and have it ready 
 		sessionToken = getSessionToken();
 		
 		// demo of retrieving information on movies
@@ -49,9 +67,11 @@ public class connectToMovieDB {
 		// There are two ways to generate a session id
 		
 		// Method 1: Generating session id using API calls (requires username and password)
+		
 
+		
 		TmdbAuthentication tmdbAuth = tmdbApi.getAuthentication();
-		TokenSession tokenSession = tmdbAuth.getSessionLogin("Schindld","CIS350supergroup");
+		TokenSession tokenSession = tmdbAuth.getSessionLogin(list.get(1), list.get(2));
 		System.out.println("Session ID: " + tokenSession.getSessionId());
 		SessionToken sessionToken = new SessionToken(tokenSession.getSessionId());
 		
