@@ -1,3 +1,9 @@
 /bin/
+<<<<<<< HEAD
 .checkstyle
+=======
+
+.classpath
+.checkstyle
+>>>>>>> branch 'master' of https://github.com/van350/TermProject.git
 .api_un_pw

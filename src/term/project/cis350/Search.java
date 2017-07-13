@@ -276,28 +276,28 @@ public class Search {
 	
 	
 	/**
-	 * Returns the current movie's poster.
-	 * 
+	 * Returns the current movie's poster. 
+	 *  
 	 * @return picture	The poster's picture.
 	 * 
 	 * 
 	 * 
-	 * */
+	 * */  
 	public BufferedImage getPoster() {
 		//thank you stackoverflow for the help
 		//https://stackoverflow.com/questions/19447104/
 		//		load-image-from-a-filepath-via-bufferedimage
 		BufferedImage picture = null;
 		try {
-		picture = ImageIO.read((new File(currentMovie
+		picture = ImageIO.read((new File(currentMovie   
 				.getImages().get(0).getFilePath())));
 		
 		} catch (IOException e) {
-			System.err.println("IOException: " 
-					+ e.getMessage());
-					e.printStackTrace();
+			System.err.println("IOException: "      
+					+ e.getMessage());    
+					e.printStackTrace();    
 		
-		}
+		}     
 		//return currentMovie.getImages().get(0).getFilePath();
 		return picture;
 	}
