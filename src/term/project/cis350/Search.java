@@ -80,6 +80,7 @@ import info.movito.themoviedbapi.model.MovieList;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * Class that contains methods for searching, 
@@ -128,6 +129,32 @@ public class Search {
 	/**Allows the use of TmdbLists class methods. */
 	private TmdbLists listTool;
 	
+	/** sets the minimum movie date year */
+	private static int minDate = 0;
+
+	/** sets the maximum movie date year */
+	private static int maxDate = 5000;
+	
+	/** sets default and application min rating of interest*/
+	private static int minRating = 0;
+	
+	
+	private static final int MIN_STARS = 0;
+	
+	private static final int MAX_STARS = 10;
+	
+	private static final String ALL_GENRE 	= "Pick By Genre";	
+	private static final String ALL_ERA 	= "Pick By Era"; 	// Defines the default message for the era combo box
+	private static final String ALL_RATING 	= "Pick By Rating";	// Defines the default message for the Rating combo box
+	
+	private static String curEra	= ALL_GENRE;				// holds the current era being searched for
+	private static String curGenre	= ALL_ERA;			// holds the current genre being searched for
+	private static String curRating = ALL_RATING;			// holds the current rating minimum being searched for
+	
+	
+	/** used as an increment for a date input parameter */
+	private static final int SHORTDECADE = 9;
+	
 	/**Default constructor connects to a user's account.
 	 * Then it checks if this program has been run on their account before.
 	 * If they have not used this program before, it creates a 
@@ -145,17 +172,81 @@ public class Search {
 		act = tmdbAccount.getAccount(sessionToken);
 		actId = new AccountID(act.getId());
 		listTool = new TmdbLists(tmdbApi);
-	
+		output = moviesTool.getPopularMovies("en-US", 0)
+				.getResults();
+		
 		if (!recListCheck()) {
 			recId = listTool.createList(sessionToken, 
 					"CIS 350 Recommended Movie List", 
 					"Movies that we recommend");
-			
+			output = moviesTool.getPopularMovies("en-US", 0)
+					.getResults();
 			currentMovie = moviesTool.getPopularMovies("en-US", 0)
-					.getResults().get(0);
+					.getResults().get(1);
 		}
+		
+		System.out.println("current movie ID: " + currentMovie.getId());
 	}
 	
+	
+	
+	public int getMinStars(){
+		return MIN_STARS;
+	}
+
+	public int getMaxStars(){
+		return MAX_STARS;
+	}
+	
+	public String getDefGenre(){
+		return ALL_GENRE;
+	}
+
+	public String getDefRating(){
+		return ALL_RATING;
+	}
+
+	public String getDefERA(){
+		return ALL_ERA;
+	}
+	
+	public Boolean setGenre(String genre){
+		curGenre = genre;
+		
+		updateSearch();
+		return true; // because successful
+	}
+
+	public Boolean setEra(String era){
+		curEra = era;
+		try{
+			minDate = Integer.parseInt( era.substring(0,4) );
+			maxDate = minDate + SHORTDECADE;
+		}catch(Exception e){
+			minDate = 0;
+			maxDate = 5000;
+		}
+		
+		updateSearch();
+		return true; // because successful
+	}
+
+	public Boolean setRating(String rating){
+		curRating =rating;
+		try{
+			minRating = Integer.parseInt(rating);
+			if(minRating < MIN_STARS){
+				minRating = MIN_STARS;
+			}else if(minRating > MAX_STARS){
+				minRating = MAX_STARS;
+			}
+		}catch(Exception e){
+			minRating = 0;
+		}
+		
+		updateSearch();
+		return true; // because successful
+	}
 	/**Checks if there is already a recommended movie list
 	 * created from this program. If there is no such list, this method
 	 * creates a list.
@@ -171,11 +262,28 @@ public class Search {
 			
 			if (nameCheck.equalsIgnoreCase(lists.getName())) {
 				recId = lists.getId();
+				if(!(lists.getItemCount() > 0)){
+					currentMovie = moviesTool.getPopularMovies("en-US", 0)
+							.getResults().get(1);
+					output = moviesTool.getPopularMovies("en-US", 0)
+							.getResults();
+					
+				} else {
+					updateSearch();
+				}
 				return true;
 			}
 			
 		}
 		return false;
+	}
+	
+	public void updateRecFromRating(final int rating) {
+		if(rating >= MAX_STARS/2){
+			updateRecPositive(rating);
+		} else {
+			updateRecNegative(rating);
+		}
 	}
 	
 	/**
@@ -189,9 +297,10 @@ public class Search {
 	 *  
 	 *  
 	 */
-	public void updateRecPositive(final int rating) {
+	private void updateRecPositive(final int rating) {
 		//FIXME
-		List<MovieDb> newRecs = currentMovie.getSimilarMovies();
+		
+		List<MovieDb> newRecs = moviesTool.getSimilarMovies(currentMovie.getId(), "en-US", 0).getResults();
 		for (MovieDb movie: newRecs) {
 			if (!listTool.isMovieOnList(recId, movie.getId())) {
 				listTool.addMovieToList(sessionToken, 
@@ -216,7 +325,7 @@ public class Search {
 	 *  @param rating The rating that the user gave the movie 
 	 *  (v1.0 is automatically zero score)
 	 */
-	public void updateRecNegative(final int rating) {
+	private void updateRecNegative(final int rating) {
 		List<MovieDb> negRecs = currentMovie.getSimilarMovies();
 		for (MovieDb movie: negRecs) {
 			if (listTool.isMovieOnList(recId, movie.getId())) {
@@ -239,10 +348,9 @@ public class Search {
 	 * 
 	 * 
 	 */
-	public void updateSearch(final String genre, 
-			final int date, final float avgRating) {
+	private void updateSearch() {
 		//FIXME
-		basicSearch(genre, date, avgRating);
+		basicSearch();
 		updateOutput();
 		
 	}
@@ -256,18 +364,19 @@ public class Search {
 	private void updateOutput() {
 		//FIXME
 		output.clear();
+		/*
 		for (MovieDb searchResultMovie: searchResults) {
 			if (listTool.isMovieOnList(recId, 
 					searchResultMovie.getId())) {
 				output.add(searchResultMovie);
 			}
-		}
+		}*/
 		
 		if (output.size() > 0) {
 			currentMovie = output.get(0);
 		} else {
 			currentMovie = moviesTool.getPopularMovies("en-US", 0)
-					.getResults().get(0);
+					.getResults().get(1);
 		}
 		
 		
@@ -287,9 +396,22 @@ public class Search {
 		//https://stackoverflow.com/questions/19447104/
 		//		load-image-from-a-filepath-via-bufferedimage
 		BufferedImage picture = null;
+		System.out.println("You are here");
+		System.out.println();
+		if(currentMovie != null){
+			System.out.println("Movie Not Null");
+		}else{
+			System.out.println("Movie NULL");
+		}
+		System.out.print(currentMovie.getPosterPath());
+		String filePath = "https://image.tmdb.org/t/p/w300/" + currentMovie.getPosterPath();
+		
+		System.out.println(filePath);
 		try {
-		picture = ImageIO.read((new File(currentMovie   
-				.getImages().get(0).getFilePath())));
+			URL url = new URL(filePath);
+			BufferedImage bi = ImageIO.read(url);
+			
+		picture = bi;//ImageIO.read((new File(filePath)));
 		
 		} catch (IOException e) {
 			System.err.println("IOException: " 
@@ -322,99 +444,70 @@ public class Search {
 	  * @param date		the year that is being searched for.
 	  * @param avgRating	the average rating that is being searched for.
 	  */
-	private void basicSearch(final String genre, 
-			final int date, final float avgRating) {
-		int genreId = 0;
-		if (genre.equalsIgnoreCase("action")) {
+	private void basicSearch() {
+		
+		int genreId;
+		System.out.println("Here");
+		if (curGenre.equalsIgnoreCase("action")) {
 			genreId = 28;
-		} else if (genre.equalsIgnoreCase("adventure")) {
+		} else if (curGenre.equalsIgnoreCase("adventure")) {
 			genreId = 12;
-		} else if (genre.equalsIgnoreCase("animation")) {
+		} else if (curGenre.equalsIgnoreCase("animation")) {
 			genreId = 16;
-		} else if (genre.equalsIgnoreCase("comedy")) {
+		} else if (curGenre.equalsIgnoreCase("comedy")) {
 			genreId = 35;
-		} else if (genre.equalsIgnoreCase("crime")) {
+		} else if (curGenre.equalsIgnoreCase("crime")) {
 			genreId = 80;
-		} else if (genre.equalsIgnoreCase("documentary")) {
+		} else if (curGenre.equalsIgnoreCase("documentary")) {
 			genreId = 99;
-		} else if (genre.equalsIgnoreCase("drama")) {
+		} else if (curGenre.equalsIgnoreCase("drama")) {
 			genreId = 18;
-		} else if (genre.equalsIgnoreCase("family")) {
+		} else if (curGenre.equalsIgnoreCase("family")) {
 			genreId = 10751;
-		} else if (genre.equalsIgnoreCase("fantasy")) {
+		} else if (curGenre.equalsIgnoreCase("fantasy")) {
 			genreId = 14;
-		} else if (genre.equalsIgnoreCase("history")) {
+		} else if (curGenre.equalsIgnoreCase("history")) {
 			genreId = 36;
-		} else if (genre.equalsIgnoreCase("horror")) {
+		} else if (curGenre.equalsIgnoreCase("horror")) {
 			genreId = 27;
-		} else if (genre.equalsIgnoreCase("music")) {
+		} else if (curGenre.equalsIgnoreCase("music")) {
 			genreId = 10402;
-		} else if (genre.equalsIgnoreCase("mystery")) {
+		} else if (curGenre.equalsIgnoreCase("mystery")) {
 			genreId = 9648;
-		} else if (genre.equalsIgnoreCase("romance")) {
+		} else if (curGenre.equalsIgnoreCase("romance")) {
 			genreId = 10749;
-		} else if (genre.equalsIgnoreCase("science fiction")) {
+		} else if (curGenre.equalsIgnoreCase("science fiction")) {
 			genreId = 878;
-		} else if (genre.equalsIgnoreCase("tv movie")) {
+		} else if (curGenre.equalsIgnoreCase("tv movie")) {
 			genreId = 10770;
-		} else if (genre.equalsIgnoreCase("thriller")) {
+		} else if (curGenre.equalsIgnoreCase("thriller")) {
 			genreId = 53;
-		} else if (genre.equalsIgnoreCase("war")) {
+		} else if (curGenre.equalsIgnoreCase("war")) {
 			genreId = 10752;
-		} else if (genre.equalsIgnoreCase("western")) {
+		} else if (curGenre.equalsIgnoreCase("western")) {
 			genreId = 37;
-		} 
-		
-		
-		
-		//TmdbDiscover disc = new TmdbDiscover(tmdbApi); doesn't work
-		//Thank you stackoverflow:
-		//https://stackoverflow.com/questions/95419/
-		//what-are-all-the-different-ways-to-create-an-object-in-java
-		TmdbDiscover disc;
-		try {
-			disc = (TmdbDiscover) Class
-					.forName("subin.rnd.TmdbDiscover")
-					.newInstance();
-			//FIXME double and triple check to make sure that this
-			//  works. Some of the search parameters were 
-			//	poorly documented.
-			searchResults = disc.getDiscover(0, "en-US", 
-					"release_date.desc",
-					false, date, date, 0, 
-					avgRating, "" + genreId,
-					"1800-01-01", "2500-01-01",
-					"US", "R", "0");
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			System.err.println("InstantiationException: " 
-			+ e.getMessage());
-			e.printStackTrace();
-			System.out.println("InstantiationException: " 
-					+ e.getMessage());
-					e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			System.err.println("IllegalAccessException: " 
-			+ e.getMessage());
-			System.out.println("IllegalAccessException: " 
-					+ e.getMessage());
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			System.err.println("ClassNotFoundException: " 
-			+ e.getMessage());
-			e.printStackTrace();
-			System.out.println("ClassNotFoundException: " 
-					+ e.getMessage());
-					e.printStackTrace();
+		} else {
+			genreId = 0;
 		}
-		
-		
-		//disc.getDiscover(0, "en-US", "release_date.desc",
-		//false, date, date, 0, avgRating, "" + genreId,"1800-01-01",
-		//"2500-01-01", "US","R","0");
-		
+		int releaseDate;
+		output.clear();
+		if(genreId != 0){
+			for(int i = 0; i < listTool.getList(recId).getItemCount(); i++){
+				MovieDb thisMovie = listTool.getList(recId).getItems().get(i);
+				releaseDate = Integer.parseInt((thisMovie.getReleaseDate().substring(0, 4)));
+				if(thisMovie.getGenres().contains(genreId) && thisMovie.getUserRating() >= minRating && releaseDate >= minDate && releaseDate <= maxDate){
+					output.add(thisMovie);
+				}
+			}
+		} else {
+			for(int i = 0; i < listTool.getList(recId).getItemCount(); i++){
+				MovieDb thisMovie = listTool.getList(recId).getItems().get(i);
+				releaseDate = Integer.parseInt((thisMovie.getReleaseDate().substring(0, 4)));
+				if(thisMovie.getUserRating() >= minRating && releaseDate >= minDate && releaseDate <= maxDate){
+					output.add(thisMovie);
+				}
+			}
+		}
 		
 		
 		
@@ -438,20 +531,23 @@ public class Search {
 		suggestedMovie = watchList.getResults().get(moviePick);
 		
 		BufferedImage suggestedPoster = null;
+String filePath = "https://image.tmdb.org/t/p/w300/" + suggestedMovie.getPosterPath();
+		
+		System.out.println(filePath);
 		try {
-			suggestedPoster = ImageIO
-					.read((new File(suggestedMovie
-							.getImages().get(0)
-							.getFilePath())));
+			URL url = new URL(filePath);
+			BufferedImage bi = ImageIO.read(url);
+			
+			suggestedPoster = bi;//ImageIO.read((new File(filePath)));
+		
 		} catch (IOException e) {
 			System.err.println("IOException: " 
 					+ e.getMessage());
-					e.printStackTrace();
+					e.printStackTrace();    
 		
-		}
-		
+		}     
+		//return currentMovie.getImages().get(0).getFilePath();
 		return suggestedPoster;
-		
 	}
 	
 	

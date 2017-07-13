@@ -9,24 +9,20 @@ import javax.swing.ImageIcon;
 
 
 public class MovieList {
-	
-	private static final String DEF_ERA 	= "Pick By Era"; 	// Defines the default message for the era combo box
-	private static final String DEF_GENRE 	= "Pick By Genre";	// Defines the default message for the Genre combo box
-	private static final String DEF_RATING 	= "Pick By Rating";	// Defines the default message for the Rating combo box
-	
-	private static String curEra 		= DEF_ERA;				// holds the current era being searched for
-	private static String curGenre	 	= DEF_GENRE;			// holds the current genre being searched for
-	private static String curRating		= DEF_RATING;			// holds the current rating minimum being searched for
+
+	private static String curEra;				// holds the current era being searched for
+	private static String curGenre;			// holds the current genre being searched for
+	private static String curRating;			// holds the current rating minimum being searched for
 	
 	private static ImgAdjust imgAdjust = new ImgAdjust();		// object used to manipulate an image
 	
 	private static int curMovie;								// used to hold the current movie on FOCUS
 	private connectToMovieDB conToDB;							// object used to connect to the movie database
-	
+	private Search search;										// object used to hold recommended movies	
 	private BufferedImage curPoster;							// BUFIMAGE used to hold the movie on FOCUS' poster
 	
-	private final int MIN_STARS = 0;							// defines the minimum star rating for a movie
-	private final int MAX_STARS = 5;							// defines the maximum star rating for a movie
+	private final int MIN_STARS;							// defines the minimum star rating for a movie
+	private final int MAX_STARS;							// defines the maximum star rating for a movie
 		
 	ArrayList<String> types;									// holds a list of valid types
 	ArrayList<String> era;										// holds a list of valid eras
@@ -36,6 +32,11 @@ public class MovieList {
 	 * Movie List constructor creates a new object of the MovieList class
 	 */
 	public MovieList(){
+		search = new Search();
+		
+		MIN_STARS = search.getMinStars();
+		MAX_STARS = search.getMaxStars();
+		
 		types = new ArrayList<String>();
 		types.add("Comedy");
 		//....
@@ -44,7 +45,8 @@ public class MovieList {
 		
 		// this order makes sure DEF_GENRE is always the
 		// first in the list. 
-		types.add(0,DEF_GENRE);
+		curGenre = search.getDefGenre();
+		types.add(0,curGenre);
 		
 		era = new ArrayList<String>();
 		era.add("1950's");
@@ -59,23 +61,23 @@ public class MovieList {
 		
 		// this order makes sure DEF_ERA is always the
 		// first in the list. 
-		era.add(0,DEF_ERA);
-
+		curEra = search.getDefERA();
+		era.add(0,curEra);
+		/*
 		for(int i = 0; i < era.size() ; i++){
 			System.out.println(era.get(i) + "\n");
 		}
-
+		*/
 		rateList = new ArrayList<String>();
 		
 		for(int i = 0; i <= MAX_STARS; i++){
 			rateList.add( Integer.toString( i ) );
 		}
 		
-		rateList.sort(String::compareToIgnoreCase);
-		
 		// this order makes sure DEF_RATING is always the
 		// first in the list. 
-		rateList.add(0,DEF_RATING);
+		curRating = search.getDefRating();
+		rateList.add(0,curRating);
 
 	}
 	
@@ -92,8 +94,8 @@ public class MovieList {
 	 * @see 	ImageIcon
 	 */
 	public ImageIcon getMoviePoster(int desHeight, int desWidth){
-		System.out.println("Before Connect");
-		conToDB = new connectToMovieDB();
+		//System.out.println("Before Connect");
+		//conToDB = new connectToMovieDB();
 		return getPosterAndSetCurMovie(desHeight, desWidth, false);
 	}
 	/**
@@ -110,7 +112,7 @@ public class MovieList {
 		return getPosterAndSetCurMovie(desHeight, desWidth, true);
 	}
 	
-	/**
+	/**movie
 	 * getPosterAndSetCurMovie returns a ImageIcon that is scaled based to the desired
 	 * input parameters. Additionally, it keeps track if the call was based on a get
 	 * movie suggestion or just another movie to be rated.  
@@ -123,18 +125,20 @@ public class MovieList {
 	 */
 	private ImageIcon getPosterAndSetCurMovie(int desHeight, int desWidth, boolean isWatchSug){
 		//dWidth 	= ;
-		//dHeight 	=;
+		//dHeight 	= ;
 		try {
     	  
 			// here a jpg and png work I am not sure what other image
-			// formats work that is only the ones that I have tried.     	      	
-			curPoster =  ImageIO.read(new File(System.getProperty("user.dir") + "/someMovie.jpg"));
+			// formats work that is only the ones that I have tried.  
+			/** gets the correct movie poster based on if application is looking for a suggestion */
+			curPoster = isWatchSug ? search.getMovieToWatch() : search.getPoster();
 			
-			//NOTE: WE SHOULD UPDATE THE curMovie HERE =>
-			//curMovie
+			//curPoster = search.getPoster();
+					/*ImageIO.read(new File(System.getProperty("user.dir") + "/someMovie.jpg"));*/
+
     	    	  
 			return new ImageIcon( imgAdjust.scaleToSize(curPoster, desWidth, desHeight) );
-		}catch (IOException e) {
+		}catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			System.out.println("BackGround Image File NOT FOUND\n");
@@ -151,7 +155,7 @@ public class MovieList {
 	 */
 	public void setMovieScore(int numStars){
 		if(MAX_STARS >= numStars && MIN_STARS <= numStars){
-			
+			search.updateRecFromRating( numStars );
 		// here need to do something with the number of stars
 		// I will be calling this every time someone swipes right
 		// or left. NOTE CURRENTLY I AM PLANNING ON A SCALE OF 
@@ -189,6 +193,7 @@ public class MovieList {
 			// ALSO NEED TO DO A CHECK TO ENSURE THAT THIS IS A VALID STRING INPUT. 
 			// I.E. is contained in the 
 			curGenre = sentGenre;
+			search.setGenre(curGenre);
 			// here because the sent era was different 
 			// we need to update the search results to reflect
 			// this
@@ -218,6 +223,7 @@ public class MovieList {
 			// ALSO NEED TO DO A CHECK TO ENSURE THAT THIS IS A VALID STRING INPUT. 
 			// I.E. is contained in the 
 			curEra = sentEra;
+			search.setEra(curEra);
 			// here because the sent era was different 
 			// we need to update the search results to reflect
 			// this
@@ -248,6 +254,7 @@ public class MovieList {
 			// ALSO NEED TO DO A CHECK TO ENSURE THAT THIS IS A VALID STRING INPUT. 
 			// I.E. is contained in the 
 			curRating = sentRating;
+			search.setRating(curRating);
 			// here because the sent era was different 
 			// we need to update the search results to reflect
 			// this
