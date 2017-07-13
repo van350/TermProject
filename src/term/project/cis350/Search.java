@@ -282,7 +282,7 @@ public class Search {
 	 * 
 	 * 
 	 * 
-	 * */
+	 * */  
 	public BufferedImage getPoster() {
 		//thank you stackoverflow for the help
 		//https://stackoverflow.com/questions/19447104/
