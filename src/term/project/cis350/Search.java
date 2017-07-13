@@ -53,7 +53,7 @@ import info.movito.themoviedbapi.TmdbAccount.MovieListResultsPage;
 */
 
 
-
+//Let's make a change!
 
 import java.util.List;
 import java.util.Random;
@@ -293,8 +293,8 @@ public class Search {
 				.getImages().get(0).getFilePath())));
 		
 		} catch (IOException e) {
-			System.err.println("IOException: "      
-					+ e.getMessage());    
+			System.err.println("IOException: " 
+					+ e.getMessage());
 					e.printStackTrace();    
 		
 		}     
@@ -304,7 +304,7 @@ public class Search {
 	
 	
 	/**
-	 * Assigns the user's rating to the current movie.
+	 * Assigns the user's rating to the current movie.  
 	 * 
 	 * @param rating	the rating that the user wants to assign to 
 	 * 	the movie.
