@@ -276,7 +276,7 @@ public class Search {
 	
 	
 	/**
-	 * Returns the current movie's poster.
+	 * Returns the current movie's poster. 
 	 * 
 	 * @return picture	The poster's picture.
 	 * 
