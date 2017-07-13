@@ -27,7 +27,7 @@ public class CIS350TermProject {
 	static final int POSTERWIDTH  	= 
 				(int) (POSTERHEIGHT / 1.47);		// derived from standard insert 4.94" wide.'
 	static final int WIDTHFACTOR 	= 1;			// Used to scale preferred panel's width as needed
-	static final int CBFONTSIZE 	= 40 /3;			// Default Font Size used 
+	static final int CBFONTSIZE 	= 40 /3;			// Default Font Size used
 	
 	
 	static JFrame f;								// holds the main JFrame of the Application
