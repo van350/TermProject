@@ -303,7 +303,7 @@ public class CIS350TermProject {
         });
 		
 	    /************************************ section start *****************************************/
-	    // the folloging section defines the proper placement of the 
+	    // the following section defines the proper placement of the 
 	    // combo boxes and the get suggestion buttons. 
 	    gbc.gridx = HORIDIST - 1;
 	    gbc.gridy = VERTDIST;
