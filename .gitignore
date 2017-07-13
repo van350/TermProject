@@ -1,4 +1,5 @@
 /bin/
 
+.classpath
 .checkstyle
 .api_un_pw

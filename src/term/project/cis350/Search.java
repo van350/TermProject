@@ -277,7 +277,7 @@ public class Search {
 	
 	/**
 	 * Returns the current movie's poster. 
-	 * 
+	 *  
 	 * @return picture	The poster's picture.
 	 * 
 	 * 
@@ -289,15 +289,15 @@ public class Search {
 		//		load-image-from-a-filepath-via-bufferedimage
 		BufferedImage picture = null;
 		try {
-		picture = ImageIO.read((new File(currentMovie
+		picture = ImageIO.read((new File(currentMovie   
 				.getImages().get(0).getFilePath())));
 		
 		} catch (IOException e) {
-			System.err.println("IOException: " 
-					+ e.getMessage());
-					e.printStackTrace();
+			System.err.println("IOException: "      
+					+ e.getMessage());    
+					e.printStackTrace();    
 		
-		}
+		}     
 		//return currentMovie.getImages().get(0).getFilePath();
 		return picture;
 	}
