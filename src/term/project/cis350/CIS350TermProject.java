@@ -162,29 +162,37 @@ public class CIS350TermProject {
 	private static void getClickInfo(MouseEvent e){
 
 		if(e.getSource() == rightArrow){
-			//setting personal rating for currently displayed poster
-			// to the maximum star rating. 
-			movieList.setMovieScore(maxStars);			
-			//getting new background poster for rating. 
-			background = new JLabel( movieList.getMoviePoster(POSTERHEIGHT, POSTERWIDTH) );
+			
+			getNewBackGround(maxStars);
+			
 		}else if(e.getSource() == leftArrow){
-			//setting personal rating for currently displayed poster
-			// to the minimal star rating.
-			movieList.setMovieScore(minStars);
-			//getting new background poster for rating. 
-			background = new JLabel( movieList.getMoviePoster(POSTERHEIGHT, POSTERWIDTH) );
+			getNewBackGround(minStars);
 		}else if(e.getSource() == getSuggestion){
-			System.out.println("Hit Button");
-			// when getSuggestion BTN is pressed it does not rate the
-			// current movie on screen. 
-			//getting new background poster for rating. 
-			background = new JLabel( movieList.getMovieToWatch(POSTERHEIGHT, POSTERWIDTH) );
+			getNewBackGround(-1);
 		}else if(e.getSource() == setting){
 			System.out.println("Hit Setting");
 				
 		
 		}
 
+	}
+	
+	private static void getNewBackGround(int setLastMovieRating){
+		
+		if(setLastMovieRating != -1){
+			//setting personal rating for currently displayed poster
+			// to the maximum star rating. 
+			movieList.setMovieScore(setLastMovieRating);
+			//getting new background poster for rating. 
+			background = new JLabel( movieList.getMoviePoster(POSTERHEIGHT, POSTERWIDTH) );
+		}else{
+			background = new JLabel( movieList.getMovieToWatch(POSTERHEIGHT, POSTERWIDTH) );
+		}
+		//f.repaint();
+		//background.repaint();
+	    //f.setContentPane(background);
+		f.dispose();
+		initGUI();
 	}
 	
 	/**
@@ -199,10 +207,10 @@ public class CIS350TermProject {
 			movieList.setEra( era.getSelectedItem().toString() );
 		}
 		if(e.getSource() == othersRating){
-			movieList.setEra( othersRating.getSelectedItem().toString() );
+			movieList.setRating( othersRating.getSelectedItem().toString() );
 		}
 		if(e.getSource() == genre){
-			movieList.setEra( genre.getSelectedItem().toString() );
+			movieList.setGenre( genre.getSelectedItem().toString() );
 		}
 	}
 	

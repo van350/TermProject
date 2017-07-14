@@ -69,7 +69,7 @@ import info.movito.themoviedbapi.TmdbAccount;
 import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbAuthentication;
 import info.movito.themoviedbapi.TmdbMovies;
-
+import info.movito.themoviedbapi.model.Genre;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.config.TokenSession;
 import info.movito.themoviedbapi.model.core.AccountID;
@@ -100,6 +100,8 @@ public class Search {
 	
 	/**Used to keep track of the recommended movies list ID. */
 	private String recId;
+	
+	private String watchLater;
 	
 	/**Used to keep track of the TmdbAccount being used. */
 	private TmdbAccount tmdbAccount;
@@ -136,10 +138,10 @@ public class Search {
 	private static int maxDate = 5000;
 	
 	/** sets default and application min rating of interest*/
-	private static int minRating = 0;
+	private static int minRating = 1;
 	
 	
-	private static final int MIN_STARS = 0;
+	private static final int MIN_STARS = 1;
 	
 	private static final int MAX_STARS = 10;
 	
@@ -147,8 +149,8 @@ public class Search {
 	private static final String ALL_ERA 	= "Pick By Era"; 	// Defines the default message for the era combo box
 	private static final String ALL_RATING 	= "Pick By Rating";	// Defines the default message for the Rating combo box
 	
-	private static String curEra	= ALL_GENRE;				// holds the current era being searched for
-	private static String curGenre	= ALL_ERA;			// holds the current genre being searched for
+	private static String curEra	= ALL_ERA;				// holds the current era being searched for
+	private static String curGenre	= ALL_GENRE;			// holds the current genre being searched for
 	private static String curRating = ALL_RATING;			// holds the current rating minimum being searched for
 	
 	
@@ -183,6 +185,12 @@ public class Search {
 					.getResults();
 			currentMovie = moviesTool.getPopularMovies("en-US", 0)
 					.getResults().get(1);
+			
+		}
+		if(!watchLaterCheck()){
+			watchLater = listTool.createList(sessionToken, 
+					"CIS 350 Movies that interested you", 
+					"Movies that you rated highly");
 		}
 		
 		System.out.println("current movie ID: " + currentMovie.getId());
@@ -255,11 +263,11 @@ public class Search {
 	 *  
 	 *  */
 	private boolean recListCheck() {
-		String nameCheck = "CIS 350 Recommended Movie List";
+		
 		for (MovieList lists: tmdbAccount
 				.getLists(sessionToken, actId, "en-US", 0)) {
 			
-			
+			String nameCheck = "CIS 350 Recommended Movie List";
 			if (nameCheck.equalsIgnoreCase(lists.getName())) {
 				recId = lists.getId();
 				if(!(lists.getItemCount() > 0)){
@@ -269,11 +277,24 @@ public class Search {
 							.getResults();
 					
 				} else {
+					
 					updateSearch();
 				}
 				return true;
 			}
 			
+		}
+		return false;
+	}
+	 
+	private boolean watchLaterCheck(){
+		String nameCheck;
+		for(MovieList lists: tmdbAccount.getLists(sessionToken, actId, "en-US", 0)){
+			nameCheck = "CIS 350 Movies that interested you";
+			if (nameCheck.equalsIgnoreCase(lists.getName())){
+				watchLater = lists.getId();
+				return true;
+			}
 		}
 		return false;
 	}
@@ -309,8 +330,9 @@ public class Search {
 			
 		}
 		rateMovie(rating);
-		tmdbAccount.addToWatchList(sessionToken, actId, 
-				currentMovie.getId(), MediaType.MOVIE);
+		if(!listTool.isMovieOnList( watchLater,  currentMovie.getId())){
+			listTool.addMovieToList(sessionToken, watchLater, currentMovie.getId());
+		}		
 		updateOutput();
 	}
 	
@@ -326,13 +348,16 @@ public class Search {
 	 *  (v1.0 is automatically zero score)
 	 */
 	private void updateRecNegative(final int rating) {
-		List<MovieDb> negRecs = currentMovie.getSimilarMovies();
+		List<MovieDb> negRecs = moviesTool.getSimilarMovies(currentMovie.getId(), "en-US", 0).getResults();
 		for (MovieDb movie: negRecs) {
 			if (listTool.isMovieOnList(recId, movie.getId())) {
 				listTool.removeMovieFromList(sessionToken, 
 						recId, movie.getId());
 			}
 			
+		}
+		if(listTool.isMovieOnList(watchLater, currentMovie.getId())){
+			listTool.removeMovieFromList(sessionToken, watchLater, currentMovie.getId());
 		}
 		rateMovie(rating);
 		updateOutput();
@@ -363,7 +388,7 @@ public class Search {
 	 * */
 	private void updateOutput() {
 		//FIXME
-		output.clear();
+		//output.clear();
 		/*
 		for (MovieDb searchResultMovie: searchResults) {
 			if (listTool.isMovieOnList(recId, 
@@ -371,12 +396,14 @@ public class Search {
 				output.add(searchResultMovie);
 			}
 		}*/
-		
+		Random rando = new Random();
+		int range = output.size();
+		System.out.println("The range if: " + range);
 		if (output.size() > 0) {
-			currentMovie = output.get(0);
+			currentMovie = output.get(rando.nextInt(range));
 		} else {
 			currentMovie = moviesTool.getPopularMovies("en-US", 0)
-					.getResults().get(1);
+					.getResults().get(rando.nextInt(moviesTool.getPopularMovies("en-US", 0).getResults().size()));
 		}
 		
 		
@@ -397,13 +424,13 @@ public class Search {
 		//		load-image-from-a-filepath-via-bufferedimage
 		BufferedImage picture = null;
 		System.out.println("You are here");
-		System.out.println();
+		
 		if(currentMovie != null){
 			System.out.println("Movie Not Null");
 		}else{
 			System.out.println("Movie NULL");
 		}
-		System.out.print(currentMovie.getPosterPath());
+		
 		String filePath = "https://image.tmdb.org/t/p/w300/" + currentMovie.getPosterPath();
 		
 		System.out.println(filePath);
@@ -419,7 +446,7 @@ public class Search {
 					e.printStackTrace();    
 		
 		}     
-		//return currentMovie.getImages().get(0).getFilePath();
+		
 		return picture;
 	}
 	
@@ -490,25 +517,39 @@ public class Search {
 			genreId = 0;
 		}
 		int releaseDate;
+		float rating;
 		output.clear();
+		boolean hasGenre = false;
 		if(genreId != 0){
 			for(int i = 0; i < listTool.getList(recId).getItemCount(); i++){
 				MovieDb thisMovie = listTool.getList(recId).getItems().get(i);
 				releaseDate = Integer.parseInt((thisMovie.getReleaseDate().substring(0, 4)));
-				if(thisMovie.getGenres().contains(genreId) && thisMovie.getUserRating() >= minRating && releaseDate >= minDate && releaseDate <= maxDate){
+				//boolean conGen = thisMovie.getGenres().contains(genreId);
+				for(Genre gen: moviesTool.getMovie(thisMovie.getId(), "en-US", null).getGenres()){
+					hasGenre = false;
+					if(gen.getId() == genreId){
+						hasGenre = true;
+						break;
+					}
+				}
+				rating = moviesTool.getMovie(thisMovie.getId(), "en-US", null).getVoteAverage();//thisMovie.getUserRating();
+				
+				if(hasGenre && rating >= (float)minRating && releaseDate >= (float)minDate && releaseDate <= (float)maxDate){
 					output.add(thisMovie);
 				}
 			}
 		} else {
 			for(int i = 0; i < listTool.getList(recId).getItemCount(); i++){
 				MovieDb thisMovie = listTool.getList(recId).getItems().get(i);
+				rating = moviesTool.getMovie(thisMovie.getId(), "en-US", null).getVoteAverage();
 				releaseDate = Integer.parseInt((thisMovie.getReleaseDate().substring(0, 4)));
-				if(thisMovie.getUserRating() >= minRating && releaseDate >= minDate && releaseDate <= maxDate){
+				if(rating >= minRating && releaseDate >= minDate && releaseDate <= maxDate){
 					output.add(thisMovie);
 				}
 			}
 		}
-		
+		int here = 34;
+		here = 44;
 		
 		
 	}
@@ -523,15 +564,14 @@ public class Search {
 	  * */
 	public BufferedImage getMovieToWatch() {
 		Random rando = new Random();
-		MovieResultsPage watchList = 
-				tmdbAccount
-				.getWatchListMovies(sessionToken, actId, 0);
-		int upperLimit = watchList.getTotalResults();
+		List<MovieDb> watchList = 
+				listTool.getList(watchLater).getItems();
+		int upperLimit = watchList.size();
 		int moviePick = rando.nextInt(upperLimit);
-		suggestedMovie = watchList.getResults().get(moviePick);
+		/*suggestedMovie*/ currentMovie = watchList.get(moviePick);
 		
 		BufferedImage suggestedPoster = null;
-String filePath = "https://image.tmdb.org/t/p/w300/" + suggestedMovie.getPosterPath();
+		String filePath = "https://image.tmdb.org/t/p/w300/" + /*suggestedMovie*/currentMovie.getPosterPath();
 		
 		System.out.println(filePath);
 		try {
