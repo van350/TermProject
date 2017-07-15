@@ -21,7 +21,7 @@ public class ModListThread {
 		recID = listID;
 	};
 	
-	public void addToRec(ListModifier movie){
+	public void addToList(ListModifier movie){
 		queue.add(movie);
 		addRec.submit(new Runnable() {
 			public void run(){
@@ -31,7 +31,7 @@ public class ModListThread {
 	}
 	
 	public void addToRec(){
-		while(queue.peek() != null){
+		while ( queue.peek() != null ) { 
 			ListModifier deQMovie = (ListModifier)queue.remove();
 			Boolean isOnList = movList.isMovieOnList(recID, deQMovie.getMovieID());
 			if(deQMovie.isAdd() && !isOnList){

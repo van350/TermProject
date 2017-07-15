@@ -1,6 +1,10 @@
 package term.project.cis350;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import info.movito.themoviedbapi.model.Genre;
+import info.movito.themoviedbapi.model.MovieDb;
 
 /**
  * This class is used to locally keep track of movies.
@@ -18,7 +22,9 @@ public class LocMov {
 	/**
 	 * Tracks the genre ids that apply to this movie.
 	 */
-	private List<Integer> genreList;
+	private List<Genre> genreList;
+	
+	private List<Integer> genreIDList;
 	
 	/**
 	 * Tracks the year the movie was released.
@@ -31,18 +37,24 @@ public class LocMov {
 	private float rating;
 	
 	/**
+	 * Tracks the movie title
+	 */
+	private String title;
+	
+	/**
 	 * Default constructor, saves the movie's information.
 	 * @param id 			The movie's Movie DB ID.
 	 * @param genres		The genres that apply to this movie.
 	 * @param year			The year the movie was released.
 	 * @param rating		The average rating the movie has online.
 	 */
-	public LocMov(final int id, final List<Integer> genres, 
-			final int year, final int rating) {
-		this.id = id;
-		genreList = genres;
-		releaseYear = year;
-		this.rating = rating;
+	public LocMov(MovieDb movie) {
+		title = movie.getTitle();
+		this.id = movie.getId();
+		genreList = movie.getGenres();
+		releaseYear = Integer.parseInt((movie.getReleaseDate()).substring(0, 4));
+		this.rating = movie.getVoteAverage();
+		genreIDList = setGenreIds(movie.getGenres());
 	}
 	
 	/**
@@ -57,7 +69,7 @@ public class LocMov {
 	 * Returns the list of genres that apply to this movie as integers.
 	 * @return genreList	The list of genre IDs that apply to this movie.
 	 */
-	public List<Integer> getGenres() {
+	public List<Genre> getGenres() {
 		return genreList;
 	}
 	
@@ -77,5 +89,23 @@ public class LocMov {
 	 */
 	public float getRating() {
 		return rating;
+	}
+	
+	private List<Integer> setGenreIds(final List<Genre> genres){
+		
+		List<Integer> intList = new ArrayList<Integer>();
+		for (Genre curGenre : genres) {
+			intList.add(curGenre.getId());
+		}
+		return intList;
+	}
+	
+	public boolean containsGenre(int tGenre){
+		for(int genreId: genreIDList){
+			if(genreId == tGenre){
+				return true;
+			}
+		}
+		return false;
 	}
 }

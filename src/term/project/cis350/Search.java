@@ -1,5 +1,7 @@
 package term.project.cis350;
 
+import java.util.ArrayList;
+
 /**
 import info.movito.themoviedbapi.model.changes.ChangesItems;
 
@@ -91,6 +93,26 @@ import java.net.URL;
  */
 public class Search {
 	
+	/** used to adjust remote Recommendation list on movieDb via threading */
+	private ModListThread modRecRemote;
+	
+	/** used to adjust remote Watch list on movieDb via threading */
+	private ModListThread modWatchRemote;
+	
+	/** used to locally hold the recommended List */
+	private List<LocMov> recList;
+
+	/** used to locally hold the recommended refined List by search */
+	private List<LocMov> recSearched;
+
+	/** used to locally hold the watch List */
+	private List<LocMov> watchList;
+	
+	/** used to locally hold the watch refined List by search */
+	private List<LocMov> watchSearched;
+	
+	/** Used to update the remote MovieDb lists*/
+	private ModListThread remoteMod;
 	
 	/**Used to keep track of search results. */
 	private MovieResultsPage searchResults;
@@ -164,6 +186,12 @@ public class Search {
 	 * If they have used this program before, 
 	 * it finds the ID of the recommended movie list and saves it. */
 	public Search() {
+					
+		recList = new ArrayList<LocMov>();
+		recSearched = new ArrayList<LocMov>();
+		watchList = new ArrayList<LocMov>();
+		watchSearched = new ArrayList<LocMov>();
+		
 		System.out.println("IN connect");
 		tmdbApi = new TmdbApi("978613ab37cca0d42531d612540d5fac");
 		moviesTool = new TmdbMovies(tmdbApi);
@@ -192,6 +220,9 @@ public class Search {
 					"CIS 350 Movies that interested you", 
 					"Movies that you rated highly");
 		}
+		
+		modRecRemote = new ModListThread(listTool, sessionToken, recId);
+		modWatchRemote = new ModListThread(listTool, sessionToken, watchLater);
 		
 		System.out.println("current movie ID: " + currentMovie.getId());
 	}
@@ -270,14 +301,18 @@ public class Search {
 			String nameCheck = "CIS 350 Recommended Movie List";
 			if (nameCheck.equalsIgnoreCase(lists.getName())) {
 				recId = lists.getId();
-				if(!(lists.getItemCount() > 0)){
+				if(lists.getItemCount() == 0){
 					currentMovie = moviesTool.getPopularMovies("en-US", 0)
 							.getResults().get(1);
 					output = moviesTool.getPopularMovies("en-US", 0)
 							.getResults();
 					
-				} else {
 					
+				} else {
+					for(MovieDb thisMovie : listTool.getList(recId).getItems() ){
+						MovieDb tMov = moviesTool.getMovie(thisMovie.getId(), "en-US", null);
+						recList.add( new LocMov(tMov) );
+					}
 					updateSearch();
 				}
 				return true;
@@ -323,15 +358,29 @@ public class Search {
 		
 		List<MovieDb> newRecs = moviesTool.getSimilarMovies(currentMovie.getId(), "en-US", 0).getResults();
 		for (MovieDb movie: newRecs) {
+			float avgRate = movie.getVoteAverage();
+			String year = movie.getReleaseDate();
+			List<Genre> genres = movie.getGenres();
+			
+			MovieDb tMov = moviesTool.getMovie(movie.getId(), "en-US", null);
+			
+			if(!recList.contains(tMov)){
+				recList.add(new LocMov(tMov));
+				modRecRemote.addToList(new ListModifier(tMov.getId(), true));
+			}
+			/*
 			if (!listTool.isMovieOnList(recId, movie.getId())) {
 				listTool.addMovieToList(sessionToken, 
 						recId, movie.getId());
-			}
+			}*/
 			
 		}
 		rateMovie(rating);
 		if(!listTool.isMovieOnList( watchLater,  currentMovie.getId())){
-			listTool.addMovieToList(sessionToken, watchLater, currentMovie.getId());
+			modWatchRemote.addToList(new ListModifier(currentMovie.getId(), true) );
+			MovieDb tMov = moviesTool.getMovie(currentMovie.getId(), "en-US", null);
+			watchList.add( new LocMov( tMov ) );
+			//listTool.addMovieToList(sessionToken, watchLater, currentMovie.getId());
 		}		
 		updateOutput();
 	}
@@ -520,8 +569,25 @@ public class Search {
 		float rating;
 		output.clear();
 		boolean hasGenre = false;
+		
+		if(recSearched.size() > 0){
+			recSearched.clear();
+		}
+		if(watchSearched.size() > 0){
+			watchSearched.clear();
+		}
+		
 		if(genreId != 0){
-			for(int i = 0; i < listTool.getList(recId).getItemCount(); i++){
+			//for(int i = 0; i < recList.size() /*listTool.getList(recId).getItemCount()*/; i++){
+			for(LocMov movie: recList){
+				if(movie.containsGenre(genreId) && 
+				   movie.getRating() 	>= minRating &&
+				   movie.getYear() 		>= minDate && 
+				   movie.getYear() 		<= maxDate){
+					/** assuming there are no duplicated in remote & local recList */
+					recSearched.add(movie);					
+			
+				/*
 				MovieDb thisMovie = listTool.getList(recId).getItems().get(i);
 				releaseDate = Integer.parseInt((thisMovie.getReleaseDate().substring(0, 4)));
 				//boolean conGen = thisMovie.getGenres().contains(genreId);
@@ -536,9 +602,18 @@ public class Search {
 				
 				if(hasGenre && rating >= (float)minRating && releaseDate >= (float)minDate && releaseDate <= (float)maxDate){
 					output.add(thisMovie);
+					*/
 				}
 			}
 		} else {
+			for(LocMov movie: recList){
+				if(movie.getRating() 	>= minRating &&
+				   movie.getYear() 		>= minDate && 
+				   movie.getYear() 		<= maxDate){
+					/** assuming there are no duplicated in remote & local recList */
+					recSearched.add(movie);					
+				}
+			/*
 			for(int i = 0; i < listTool.getList(recId).getItemCount(); i++){
 				MovieDb thisMovie = listTool.getList(recId).getItems().get(i);
 				rating = moviesTool.getMovie(thisMovie.getId(), "en-US", null).getVoteAverage();
@@ -546,6 +621,7 @@ public class Search {
 				if(rating >= minRating && releaseDate >= minDate && releaseDate <= maxDate){
 					output.add(thisMovie);
 				}
+			}*/
 			}
 		}
 		int here = 34;
