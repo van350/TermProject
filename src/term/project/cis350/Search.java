@@ -93,7 +93,8 @@ import java.net.URL;
  */
 public class Search {
 	
-	/** used to adjust remote Recommendation list on movieDb via threading. */
+	/** used to adjust remote 
+	 * Recommendation list on movieDb via threading. */
 	private ModRecListThread modRecRemote;
 	
 	/** used to adjust remote Watch list on movieDb via threading. */
@@ -117,8 +118,7 @@ public class Search {
 	/** holds a list of all available genres. */
 	private ArrayList<String> genreListAvail = new ArrayList<String>();
 	
-	/**Used to keep track of search results. */
-	private MovieResultsPage searchResults;
+
 	
 	/**used to keep track of the output. */
 	private List<MovieDb> output;
@@ -126,13 +126,13 @@ public class Search {
 	/**Used to keep track of the recommended movies list ID. */
 	private String recId;
 	
+	/**Used to track the ID of the watch later list. */
 	private String watchLater;
 	
 	/**Used to keep track of the TmdbAccount being used. */
 	private TmdbAccount tmdbAccount;
 	
-	/**Used to track the suggested movie to watch. */
-	private MovieDb suggestedMovie;
+
 	
 	/**Used to keep track of the movie database account being used. */
 	private Account act;
@@ -165,18 +165,29 @@ public class Search {
 	/** sets default and application minimum rating of interest. */
 	private static int minRating = 1;
 	
-	
+	/**The minimum rating available. */
 	private static final int MIN_STARS = 1;
 	
+	/**The maximum rating available. */
 	private static final int MAX_STARS = 10;
 	
+	/**The default search setting for the Genre search parameter. */
 	private static final String ALL_GENRE 	= "Pick By Genre";	
-	private static final String ALL_ERA 	= "Pick By Era"; 	// Defines the default message for the era combo box
-	private static final String ALL_RATING 	= "Pick By Rating";	// Defines the default message for the Rating combo box
 	
-	private static String curEra	= ALL_ERA;				// holds the current era being searched for
-	private static String curGenre	= ALL_GENRE;			// holds the current genre being searched for
-	private static String curRating = ALL_RATING;			// holds the current rating minimum being searched for
+	/**Defines the default message for the era combo box.*/
+	private static final String ALL_ERA 	= "Pick By Era";
+	
+	/**Defines the default message for the Rating combo box.*/
+	private static final String ALL_RATING 	= "Pick By Rating";
+	
+	/**holds the current era being searched for.*/
+	private static String curEra	= ALL_ERA;
+	
+	/**holds the current genre being searched for.*/
+	private static String curGenre	= ALL_GENRE;
+	
+	/**holds the current rating minimum being searched for.*/
+	private static String curRating = ALL_RATING;
 	
 	
 	/** used as an increment for a date input parameter. */
@@ -224,39 +235,71 @@ public class Search {
 					"Movies that you rated highly");
 		}
 		
-		modRecRemote = new ModRecListThread(listTool, sessionToken, recId);
-		modWatchRemote = new ModWatchListThread(listTool, sessionToken, watchLater);
+		modRecRemote = new ModRecListThread(
+				listTool, sessionToken, recId);
+		modWatchRemote = new ModWatchListThread(
+				listTool, sessionToken, watchLater);
 		
 		System.out.println("current movie ID: " + currentMovie.getId());
 	}
 	
 	
-	
+	/** returns the minimum possible rating.
+	 * 
+	 * @return MIN_STARS	The minimum rating possible.
+	 */
 	public int getMinStars() {
 		return MIN_STARS;
 	}
 
+	/** returns the maximum possible rating.
+	 * 
+	 * @return MAX_STARS	The maximum rating possible.
+	 */
 	public int getMaxStars() {
 		return MAX_STARS;
 	}
 	
+	/**Returns the default genre setting.
+	 * 
+	 * @return	ALL_GENRE	The default genre setting.
+	 */
 	public String getDefGenre() {
 		return ALL_GENRE;
 	}
 	
+	/** returns the currently selected Genre.
+	 * 
+	 * @return	curGenre  The currently selected Genre setting.
+	 */
 	public String getCurGenre() {
 		return curGenre;
 	}
 
+	/**Returns the default minimum acceptable rating for searching.
+	 * 
+	 * @return	ALL_RATING	the default acceptable 
+	 * rating for searching.
+	 */
 	public String getDefRating() {
 		return ALL_RATING;
 	}
 
+	/**Returns the default era (period of 10 years) search setting.
+	 * 
+	 * @return	ALL_ERA	The default era search setting.
+	 */
 	public String getDefERA() {
 		return ALL_ERA;
 	}
 	
-	public Boolean setGenre(String genre) {
+	/**Sets the current genre and updates the 
+	 * search to include the new parameter.
+	 * 
+	 * @param genre	The new genre to search with.
+	 * @return	true	Shows the update was successful.
+	 */
+	public Boolean setGenre(final String genre) {
 		curGenre = genre;
 		
 		updateSearch();
