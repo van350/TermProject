@@ -193,7 +193,7 @@ public class MovieList {
 			if (isWatchSug) {
 				curPoster = search.getMovieToWatch();
 			} else {
-				search.getPoster();
+				curPoster = search.getPoster();
 			}
 			
 			//curPoster = search.getPoster();
