@@ -237,6 +237,10 @@ public class Search {
 	public String getDefGenre(){
 		return ALL_GENRE;
 	}
+	
+	public int getGenreIndex(){
+		return 1;
+	}
 
 	public String getDefRating(){
 		return ALL_RATING;
@@ -266,6 +270,9 @@ public class Search {
 		updateSearch();
 		return true; // because successful
 	}
+	public String getCurEra(){
+		return curEra;
+	}
 
 	public Boolean setRating(String rating){
 		curRating =rating;
@@ -283,6 +290,11 @@ public class Search {
 		updateSearch();
 		return true; // because successful
 	}
+	
+	public String getCurRating(){
+		return curRating;
+	}
+	
 	/**Checks if there is already a recommended movie list
 	 * created from this program. If there is no such list, this method
 	 * creates a list.
@@ -456,7 +468,7 @@ public class Search {
 	private void updateSearch() {
 		//FIXME
 		basicSearch();
-		updateOutput();
+		
 		
 	}
 	

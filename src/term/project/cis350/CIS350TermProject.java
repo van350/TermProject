@@ -260,6 +260,7 @@ public final class CIS350TermProject {
         f.setLocationRelativeTo(null);
 	    f.setSize(width, height);
 	    f.setVisible(true);
+
 	}
 	/*
 	 * This function is used to initialize the movieList object as
@@ -317,15 +318,23 @@ public final class CIS350TermProject {
 	 */
 	private static void getNewBackGround(final int setLastMovieRating) {
 		
-		if (setLastMovieRating != -1) {
-			//setting personal rating for currently displayed poster
-			// to the maximum star rating. 
-			movieList.setMovieScore(setLastMovieRating);
-			//getting new background poster for rating. 
-			background = new JLabel(movieList
-					.getMoviePoster(
-							POSTERHEIGHT, 
-							POSTERWIDTH));
+		if (setLastMovieRating > -1) {
+			if(setLastMovieRating == 0){
+				//getting new background poster for rating. 
+				background = new JLabel(movieList
+						.getMoviePoster(
+								POSTERHEIGHT, 
+								POSTERWIDTH));
+			}else{
+				//setting personal rating for currently displayed poster
+				// to the maximum star rating. 
+				movieList.setMovieScore(setLastMovieRating);
+				//getting new background poster for rating. 
+				background = new JLabel(movieList
+						.getMoviePoster(
+								POSTERHEIGHT, 
+								POSTERWIDTH));
+			}
 		} else {
 			background = new JLabel(movieList
 					.getMovieToWatch(
@@ -337,6 +346,7 @@ public final class CIS350TermProject {
 	    //f.setContentPane(background);
 		f.dispose();
 		initGUI();
+
 	}
 	
 	/**
@@ -360,6 +370,9 @@ public final class CIS350TermProject {
 		if (e.getSource() == genre) {
 			movieList.setGenre(genre.getSelectedItem().toString());
 		}
+		
+
+	    getNewBackGround(0);
 	}
 	
 	/**
@@ -442,6 +455,7 @@ public final class CIS350TermProject {
 	    //othersRating JComboBox with the appropriate font configuration
 	    genre = new JComboBox<>(movieList.genreList());
 	    Font font = new Font((String) "", Font.PLAIN, CBFONTSIZE);
+	    //genre.setSelectedIndex(movieList.getSelectIndex());
 	    genre.setFont(font);
 	    genre.addActionListener(new ActionListener() {
 			@Override
@@ -450,6 +464,7 @@ public final class CIS350TermProject {
 			}
 	    });
 	    era = new JComboBox<>(movieList.eraList());
+	    era.setSelectedItem(movieList.getSelectedEra());
 	    era.setFont(font);
 	    era.addActionListener(new ActionListener() {
 			@Override
@@ -458,6 +473,7 @@ public final class CIS350TermProject {
 			}
 	    });
 	    othersRating = new JComboBox<>(movieList.ratingList());
+	    othersRating.setSelectedItem(movieList.getSelectedRating());
 	    othersRating.setFont(font);
 	    othersRating.addActionListener(new ActionListener() {
 			@Override
@@ -496,5 +512,6 @@ public final class CIS350TermProject {
 	    gbc.insets = new Insets(P2_TOP_PAD, 0, 0, 0);
         f.add(p2, gbc);
 	    /*************************** section  end **********/
+
 	}
 }
