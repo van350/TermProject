@@ -9,6 +9,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -279,11 +281,6 @@ public final class CIS350TermProject {
 		minStars = movieList.getMinStars();
 	}
 	
-	/*
-	 * getClickInfo is used to determine which element was
-	 * clicked and calls the movieList object as needed
-	 * to generate new movies to rate and suggestions for watching
-	 */
 	/**
 	 * getClickInfo(MouseEvent) is used to 
 	 * capture mouse clicks information and
@@ -306,9 +303,10 @@ public final class CIS350TermProject {
 			getNewBackGround(-1);
 		} else if (e.getSource() == setting) {
 			System.out.println("Hit Setting");
-				
-		
 		}
+		ComboBoxModel<String> model = 
+				new DefaultComboBoxModel<String>(movieList.genreListAvail());
+		genre.setModel(model);
 
 	}
 	
@@ -319,13 +317,13 @@ public final class CIS350TermProject {
 	private static void getNewBackGround(final int setLastMovieRating) {
 		
 		if (setLastMovieRating > -1) {
-			if(setLastMovieRating == 0){
+			if (setLastMovieRating == 0) {
 				//getting new background poster for rating. 
 				background = new JLabel(movieList
 						.getMoviePoster(
 								POSTERHEIGHT, 
 								POSTERWIDTH));
-			}else{
+			} else {
 				//setting personal rating for currently displayed poster
 				// to the maximum star rating. 
 				movieList.setMovieScore(setLastMovieRating);
@@ -455,7 +453,7 @@ public final class CIS350TermProject {
 	    //othersRating JComboBox with the appropriate font configuration
 	    genre = new JComboBox<>(movieList.genreList());
 	    Font font = new Font((String) "", Font.PLAIN, CBFONTSIZE);
-	    //genre.setSelectedIndex(movieList.getSelectIndex());
+	    genre.setSelectedItem(movieList.getSelectGenre());
 	    genre.setFont(font);
 	    genre.addActionListener(new ActionListener() {
 			@Override

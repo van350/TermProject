@@ -79,10 +79,7 @@ public class MovieList {
 		minStars = search.getMinStars();
 		maxStars = search.getMaxStars();
 		
-		types = new ArrayList<String>();
-		types.add("Comedy");
-		//....
-		types.add("Action");
+		types = search.getGenreList();
 		types.sort(String::compareToIgnoreCase);
 		
 		// this order makes sure DEF_GENRE is always the
@@ -248,13 +245,6 @@ public class MovieList {
 	}
 
 	/**
-	 * gets the comboBox Selected Index desired
-	 * @return returns selected index for 
-	 */
-	public int getGenreSelectIndex(){
-		return search.getGenreIndex();
-	}
-	/**
 	 * setGenre is used to set the current Genre 
 	 * to get results from. This function returns
 	 * Boolean true if the genre was set or set
@@ -280,6 +270,21 @@ public class MovieList {
 		}	// otherwise we do nothing. 
 		return false;
 	}
+	
+	public String[] genreListAvail() {
+		
+		return search.getGenreAvail();
+	}
+
+
+	/**
+	 * gets the comboBox Selected String desired.
+	 * @return returns selected String from the Available Genres
+	 */
+	public String getSelectGenre() {
+		return search.getCurGenre();
+	}
+	
 	/**
 	 * eraList() returns a list of 
 	 * valid era strings that can be used to select 
@@ -293,13 +298,13 @@ public class MovieList {
 		return era.toArray(new String[era.size()]);
 	}
 	/**
-	 * gets the comboBox Selected Index desired
+	 * gets the comboBox Selected Index desired.
 	 * @return returns selected string 
 	 */
-	public String getSelectedEra(){
+	public String getSelectedEra() {
 		return search.getCurEra();
 	}
-
+	
 	
 	/**
 	 * setEra() is used to set the current 
@@ -337,7 +342,12 @@ public class MovieList {
 		//that contain valid rating options. 
 		return rateList.toArray(new String[rateList.size()]);
 	}
-	public String getSelectedRating(){
+	/**
+	 * used to get the current rating selection.
+	 * @return returns a string associated with the current 
+	 * 			rating selected
+	 */
+	public String getSelectedRating() {
 		return search.getCurRating();
 	}
 
