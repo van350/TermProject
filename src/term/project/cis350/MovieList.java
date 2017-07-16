@@ -1,41 +1,83 @@
 package term.project.cis350;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+
 import java.util.ArrayList;
 
-import javax.imageio.ImageIO;
+
 import javax.swing.ImageIcon;
 
-
+/**
+ * Aids in communication between controller and GUI.
+ * 
+ * @author Chris
+ *
+ */
 public class MovieList {
 
-	private static String curEra;				// holds the current era being searched for
-	private static String curGenre;			// holds the current genre being searched for
-	private static String curRating;			// holds the current rating minimum being searched for
-	
-	private static ImgAdjust imgAdjust = new ImgAdjust();		// object used to manipulate an image
-	
-	private static int curMovie;								// used to hold the current movie on FOCUS
-	private connectToMovieDB conToDB;							// object used to connect to the movie database
-	private Search search;										// object used to hold recommended movies	
-	private BufferedImage curPoster;							// BUFIMAGE used to hold the movie on FOCUS' poster
-	
-	private final int MIN_STARS;							// defines the minimum star rating for a movie
-	private final int MAX_STARS;							// defines the maximum star rating for a movie
-		
-	ArrayList<String> types;									// holds a list of valid types
-	ArrayList<String> era;										// holds a list of valid eras
-	ArrayList<String> rateList;									// holds a list of valid rateList
+	/**
+	 * holds the current era being searched for.
+	 */
+	private String curEra;				
 	
 	/**
-	 * Movie List constructor creates a new object of the MovieList class
+	 * holds the current genre being searched for.
 	 */
-	public MovieList(){
+	private String curGenre;		
+	
+	/**
+	 * holds the current rating minimum being searched for.
+	 */
+	private String curRating;		
+	
+	/**
+	 * object used to manipulate an image.
+	 */
+	private ImgAdjust imgAdjust = new ImgAdjust();	
+			
+	
+	/**
+	 * object used to hold recommended movies.
+	 */
+	private Search search;
+	
+	/**
+	 * BUFIMAGE used to hold the movie on FOCUS' poster.
+	 */
+	private BufferedImage curPoster;		
+	
+	/**
+	 * defines the minimum star rating for a movie.
+	 */
+	private final int minStars;
+	
+	/**
+	 * defines the maximum star rating for a movie.
+	 */
+	private final int maxStars;	
+	
+		/**
+		 * holds a list of valid types.
+		 */
+	private ArrayList<String> types;
+	
+	/**
+	 * holds a list of valid eras.
+	 */
+	private ArrayList<String> era;
+	
+	/**
+	 * holds a list of valid rateList.
+	 */
+	private ArrayList<String> rateList;	
+	
+	/**
+	 * Movie List constructor creates a new object of the MovieList class.
+	 */
+	public MovieList() {
 		search = new Search();
 		
-		MIN_STARS = search.getMinStars();
-		MAX_STARS = search.getMaxStars();
+		minStars = search.getMinStars();
+		maxStars = search.getMaxStars();
 		
 		types = new ArrayList<String>();
 		types.add("Comedy");
@@ -46,7 +88,7 @@ public class MovieList {
 		// this order makes sure DEF_GENRE is always the
 		// first in the list. 
 		curGenre = search.getDefGenre();
-		types.add(0,curGenre);
+		types.add(0, curGenre);
 		
 		era = new ArrayList<String>();
 		era.add("1950's");
@@ -62,7 +104,7 @@ public class MovieList {
 		// this order makes sure DEF_ERA is always the
 		// first in the list. 
 		curEra = search.getDefERA();
-		era.add(0,curEra);
+		era.add(0, curEra);
 		/*
 		for(int i = 0; i < era.size() ; i++){
 			System.out.println(era.get(i) + "\n");
@@ -70,14 +112,14 @@ public class MovieList {
 		*/
 		rateList = new ArrayList<String>();
 		
-		for(int i = 0; i <= MAX_STARS; i++){
-			rateList.add( Integer.toString( i ) );
+		for (int i = 0; i <= maxStars; i++) {
+			rateList.add(Integer.toString(i));
 		}
 		
 		// this order makes sure DEF_RATING is always the
 		// first in the list. 
 		curRating = search.getDefRating();
-		rateList.add(0,curRating);
+		rateList.add(0, curRating);
 
 	}
 	
@@ -88,58 +130,82 @@ public class MovieList {
 	 * to the desired Height and width based on the input parameters 
 	 * desHeight and desWidth respectively. 
 	 * 
-	 * @param desHeight defines the desired height for the returned imageIcon
+	 * @param desHeight defines the desired 
+	 * height for the returned imageIcon
 	 * @param desWidth defines the desired width for the returned imageIcon
-	 * @return 	ImageIcon with the desired width and height of the current Movie on FOCUS
+	 * @return 	ImageIcon with the desired 
+	 * width and height of the current Movie on FOCUS
 	 * @see 	ImageIcon
 	 */
-	public ImageIcon getMoviePoster(int desHeight, int desWidth){
+	public ImageIcon getMoviePoster(final int desHeight, 
+			final int desWidth) {
 		//System.out.println("Before Connect");
 		//conToDB = new connectToMovieDB();
 		return getPosterAndSetCurMovie(desHeight, desWidth, false);
 	}
 	/**
 	 * Returns an ImageIcon that corresponds to the current movie suggestion
-	 * and scaled to the desired Height and width based on the input parameters 
+	 * and scaled to the desired Height and 
+	 * width based on the input parameters 
 	 * desHeight and desWidth respectively. 
 	 * 
-	 * @param desHeight defines the desired height for the returned imageIcon
+	 * @param desHeight defines the desired 
+	 * height for the returned imageIcon
 	 * @param desWidth defines the desired width for the returned imageIcon
-	 * @return 	ImageIcon with the desired width and height of the current Movie suggested
+	 * @return 	ImageIcon with the desired 
+	 * width and height of the current Movie suggested
 	 * @see 	ImageIcon
 	 */
-	public ImageIcon getMovieToWatch(int desHeight, int desWidth){
+	public ImageIcon getMovieToWatch(final int desHeight, 
+			final int desWidth) {
 		return getPosterAndSetCurMovie(desHeight, desWidth, true);
 	}
 	
 	/**movie
-	 * getPosterAndSetCurMovie returns a ImageIcon that is scaled based to the desired
-	 * input parameters. Additionally, it keeps track if the call was based on a get
+	 * getPosterAndSetCurMovie returns a 
+	 * ImageIcon that is scaled based to the desired
+	 * input parameters. Additionally, it keeps 
+	 * track if the call was based on a get
 	 * movie suggestion or just another movie to be rated.  
 	 * 
-	 * @param desHeight is the desired height in which the poster should be scaled to 
-	 * @param desWidth is the desired width in which the poster should be scaled to 
-	 * @param isWatchSug is a bool that determines if the poster selection was the result
+	 * @param desHeight is the desired height 
+	 * in which the poster should be scaled to 
+	 * @param desWidth is the desired width in 
+	 * which the poster should be scaled to 
+	 * @param isWatchSug is a bool that determines
+	 *  if the poster selection was the result
 	 * 			of a getMovie selections. 
 	 * @return ImageIcon with desired width and height 
 	 */
-	private ImageIcon getPosterAndSetCurMovie(int desHeight, int desWidth, boolean isWatchSug){
+	private ImageIcon getPosterAndSetCurMovie(final int desHeight, 
+			final int desWidth, final boolean isWatchSug) {
 		//dWidth 	= ;
 		//dHeight 	= ;
 		try {
     	  
-			// here a jpg and png work I am not sure what other image
-			// formats work that is only the ones that I have tried.  
-			/** gets the correct movie poster based on if application is looking for a suggestion */
-			curPoster = isWatchSug ? search.getMovieToWatch() : search.getPoster();
+			// here a jpg and png work I am not 
+			//sure what other image
+			// formats work that is only the 
+			//ones that I have tried.  
+			/** gets the correct movie poster based 
+			 * on if application is looking for a suggestion */
+			
+			if (isWatchSug) {
+				curPoster = search.getMovieToWatch();
+			} else {
+				search.getPoster();
+			}
 			
 			//curPoster = search.getPoster();
-					/*ImageIO.read(new File(System.getProperty("user.dir") + "/someMovie.jpg"));*/
+					/*ImageIO.read(new File(
+					 * System.getProperty("user.dir") +
+					 *  "/someMovie.jpg"));*/
 
     	    	  
-			return new ImageIcon( imgAdjust.scaleToSize(curPoster, desWidth, desHeight) );
-		}catch (Exception e) {
-			// TODO Auto-generated catch block
+			return new ImageIcon(imgAdjust.scaleToSize(curPoster, 
+					desWidth, desHeight));
+		} catch (Exception e) {
+		
 			e.printStackTrace();
 			System.out.println("BackGround Image File NOT FOUND\n");
 			return null;
@@ -149,13 +215,13 @@ public class MovieList {
 	
 	/**
 	 * setMovieScore is used to rate the curMovie object. For invalid inputs
-	 * i.e. < MIN_STARS or > MAX_STARS this function does nothing
+	 * i.e. < minStars or > maxStars this function does nothing
 	 * 
 	 * @param numStars is used to set the curMovie rating for that movie. 
 	 */
-	public void setMovieScore(int numStars){
-		if(MAX_STARS >= numStars && MIN_STARS <= numStars){
-			search.updateRecFromRating( numStars );
+	public void setMovieScore(final int numStars) {
+		if (maxStars >= numStars && minStars <= numStars) {
+			search.updateRecFromRating(numStars);
 		// here need to do something with the number of stars
 		// I will be calling this every time someone swipes right
 		// or left. NOTE CURRENTLY I AM PLANNING ON A SCALE OF 
@@ -163,7 +229,7 @@ public class MovieList {
 		// CAN MAKE THE ADJUSTMENTS.
 		
 		// curMovie ... = numStars 
-		}else{
+		} else {
 			System.out.println("Invalid star entry");
 		}
 	}
@@ -175,22 +241,26 @@ public class MovieList {
 	 * 
 	 * @return String[] returns a list of valid genres for this application
 	 */
-	public String[] genreList(){
+	public String[] genreList() {
 		return types.toArray(new String[types.size()]);
 	}
 	
 	/**
-	 * setGenre is used to set the current Genre to get results from. This function returns
-	 * Boolean true if the genre was set or set to a different genre than its previous state.
+	 * setGenre is used to set the current Genre 
+	 * to get results from. This function returns
+	 * Boolean true if the genre was set or set
+	 *  to a different genre than its previous state.
 	 * if the genre remains the same the function returns false. 
 	 * 
-	 * @param sentGenre String that is used to set the current genre of interest.
+	 * @param sentGenre String that is used
+	 *  to set the current genre of interest.
 	 * @return Boolean returns true if genre was changed false otherwise. 
 	 */
-	public Boolean setGenre(String sentGenre){
+	public Boolean setGenre(final String sentGenre) {
 		System.out.println(sentGenre);
-		if(curGenre != sentGenre){
-			// ALSO NEED TO DO A CHECK TO ENSURE THAT THIS IS A VALID STRING INPUT. 
+		if (curGenre.equalsIgnoreCase(sentGenre)) {
+			// ALSO NEED TO DO A CHECK 
+			//TO ENSURE THAT THIS IS A VALID STRING INPUT. 
 			// I.E. is contained in the 
 			curGenre = sentGenre;
 			search.setGenre(curGenre);
@@ -202,25 +272,31 @@ public class MovieList {
 		return false;
 	}
 	/**
-	 * eraList() returns a list of valid era strings that can be used to select 
+	 * eraList() returns a list of 
+	 * valid era strings that can be used to select 
 	 * an era to get movie suggestions or movies to rate. 
 	 * 
-	 * @return	String[] is a list of valid era strings for the application. 
+	 * @return	String[] is a list of 
+	 * valid era strings for the application. 
 	 */
-	public String[] eraList(){
+	public String[] eraList() {
 
 		return era.toArray(new String[era.size()]);
 	}
 	/**
-	 * setEra() is used to set the current search mode by an era's criteria. the function
-	 * returns true if the era was change to a different era or false if nothing was changed  
-	 * @param sentEra is a string that is used to change the current era search criteria. 
+	 * setEra() is used to set the current 
+	 * search mode by an era's criteria. the function
+	 * returns true if the era was change 
+	 * to a different era or false if nothing was changed  
+	 * @param sentEra is a string that is used 
+	 * to change the current era search criteria. 
 	 * @return	returns true if the era was changed false otherwise. 
 	 */
-	public Boolean setEra(String sentEra){
+	public Boolean setEra(final String sentEra) {
 		System.out.println(sentEra);
-		if(curEra != sentEra){
-			// ALSO NEED TO DO A CHECK TO ENSURE THAT THIS IS A VALID STRING INPUT. 
+		if (curEra.equalsIgnoreCase(sentEra)) {
+			// ALSO NEED TO DO A CHECK TO 
+			//ENSURE THAT THIS IS A VALID STRING INPUT. 
 			// I.E. is contained in the 
 			curEra = sentEra;
 			search.setEra(curEra);
@@ -232,26 +308,32 @@ public class MovieList {
 		return false;
 	}
 	/**
-	 * ratingList() returns a string[] that contains valid rating options for this
+	 * ratingList() returns a string[] 
+	 * that contains valid rating options for this
 	 * application search results. 
-	 * @return String[] contains a list of valid rating options for this applications search results. 
+	 * @return String[] contains a list of 
+	 * valid rating options for this applications search results. 
 	 */
-	public String[] ratingList(){
-		// returning an array of strings that contain valid rating options. 
+	public String[] ratingList() {
+		// returning an array of strings 
+		//that contain valid rating options. 
 		return rateList.toArray(new String[rateList.size()]);
 	}
 
 	/**
 	 * setRating() returns true if the input string caused a change in the 
-	 * current movie rating search criteria. or false otherwise. This function
+	 * current movie rating search 
+	 * criteria. or false otherwise. This function
 	 * is used to set the search criteria for getting a curMovie object. 
 	 * @param sentRating is a string to set the search criteria 
-	 * @return Boolean returns true if the rating criteria was changed, false otherwise. 
+	 * @return Boolean returns true 
+	 * if the rating criteria was changed, false otherwise. 
 	 */
-	public Boolean setRating(String sentRating){
+	public Boolean setRating(final String sentRating) {
 		System.out.println(sentRating);
-		if(curRating != sentRating){
-			// ALSO NEED TO DO A CHECK TO ENSURE THAT THIS IS A VALID STRING INPUT. 
+		if (curRating.equalsIgnoreCase(sentRating)) {
+			// ALSO NEED TO DO A CHECK TO 
+			//ENSURE THAT THIS IS A VALID STRING INPUT. 
 			// I.E. is contained in the 
 			curRating = sentRating;
 			search.setRating(curRating);
@@ -264,17 +346,21 @@ public class MovieList {
 	}
 	
 	/**
-	 * getMaxStar() returns the maximum valid star rating for this application
-	 * @return int returns the maximum valid star rating for this application
+	 * getMaxStar() returns the maximum valid 
+	 * star rating for this application.
+	 * @return int returns the maximum valid 
+	 * star rating for this application.
 	 */
-	public int getMaxStars(){
-		return MAX_STARS;	
+	public int getMaxStars() {
+		return maxStars;	
 	}
 	/**
-	 * getMinStars() returns the minimum valid star rating for this application 
-	 * @return int returns the minimum valid star rating for this application
+	 * getMinStars() returns the 
+	 * minimum valid star rating for this application. 
+	 * @return int returns the 
+	 * minimum valid star rating for this application
 	 */
-	public int getMinStars(){
-		return MIN_STARS;
+	public int getMinStars() {
+		return minStars;
 	}
 }

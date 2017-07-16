@@ -24,6 +24,9 @@ public class LocMov {
 	 */
 	private List<Genre> genreList;
 	
+	/**
+	 * List of genres as Integer IDs.
+	 */
 	private List<Integer> genreIDList;
 	
 	/**
@@ -37,22 +40,20 @@ public class LocMov {
 	private float rating;
 	
 	/**
-	 * Tracks the movie title
+	 * Tracks the movie title.
 	 */
 	private String title;
 	
 	/**
 	 * Default constructor, saves the movie's information.
-	 * @param id 			The movie's Movie DB ID.
-	 * @param genres		The genres that apply to this movie.
-	 * @param year			The year the movie was released.
-	 * @param rating		The average rating the movie has online.
+	 * @param movie		The movie that we are interested in.
 	 */
-	public LocMov(MovieDb movie) {
+	public LocMov(final MovieDb movie) {
 		title = movie.getTitle();
 		this.id = movie.getId();
 		genreList = movie.getGenres();
-		releaseYear = Integer.parseInt((movie.getReleaseDate()).substring(0, 4));
+		releaseYear = Integer.parseInt((movie.getReleaseDate())
+				.substring(0, 4));
 		this.rating = movie.getVoteAverage();
 		genreIDList = setGenreIds(movie.getGenres());
 	}
@@ -91,7 +92,14 @@ public class LocMov {
 		return rating;
 	}
 	
-	private List<Integer> setGenreIds(final List<Genre> genres){
+	/**
+	 * Takes the list of Genres and parses the information 
+	 * into usable Integers.
+	 * 
+	 * @param genres	The list of genres that a movie has.
+	 * @return intList	The list of genres as integers that a movie has.
+	 */
+	private List<Integer> setGenreIds(final List<Genre> genres) {
 		
 		List<Integer> intList = new ArrayList<Integer>();
 		for (Genre curGenre : genres) {
@@ -100,12 +108,28 @@ public class LocMov {
 		return intList;
 	}
 	
-	public boolean containsGenre(int tGenre){
-		for(int genreId: genreIDList){
-			if(genreId == tGenre){
+	/**
+	 * checks if the genre ID passed as a parameter 
+	 * matches any of the genre IDs that the movie has.
+	 * @param tGenre	The genre ID that we're looking for.
+	 * @return boolean	True if the movie has the 
+	 * genre that is being searched for.
+	 */
+	public boolean containsGenre(final int tGenre) {
+		for (int genreId: genreIDList) {
+			if (genreId == tGenre) {
 				return true;
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Gets the title of the movie.
+	 * 
+	 * @return title	The title of the movie.
+	 */
+	public String getTitle() {
+		return title;
 	}
 }
