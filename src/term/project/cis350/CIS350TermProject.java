@@ -9,6 +9,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.ComboBoxModel;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -260,6 +262,7 @@ public final class CIS350TermProject {
         f.setLocationRelativeTo(null);
 	    f.setSize(width, height);
 	    f.setVisible(true);
+
 	}
 	/*
 	 * This function is used to initialize the movieList object as
@@ -278,11 +281,6 @@ public final class CIS350TermProject {
 		minStars = movieList.getMinStars();
 	}
 	
-	/*
-	 * getClickInfo is used to determine which element was
-	 * clicked and calls the movieList object as needed
-	 * to generate new movies to rate and suggestions for watching
-	 */
 	/**
 	 * getClickInfo(MouseEvent) is used to 
 	 * capture mouse clicks information and
@@ -305,9 +303,11 @@ public final class CIS350TermProject {
 			getNewBackGround(-1);
 		} else if (e.getSource() == setting) {
 			System.out.println("Hit Setting");
-				
-		
 		}
+		ComboBoxModel<String> model = 
+				new DefaultComboBoxModel<String>(
+						movieList.genreListAvail());
+		genre.setModel(model);
 
 	}
 	
@@ -317,15 +317,24 @@ public final class CIS350TermProject {
 	 */
 	private static void getNewBackGround(final int setLastMovieRating) {
 		
-		if (setLastMovieRating != -1) {
-			//setting personal rating for currently displayed poster
-			// to the maximum star rating. 
-			movieList.setMovieScore(setLastMovieRating);
-			//getting new background poster for rating. 
-			background = new JLabel(movieList
-					.getMoviePoster(
-							POSTERHEIGHT, 
-							POSTERWIDTH));
+		if (setLastMovieRating > -1) {
+			if (setLastMovieRating == 0) {
+				//getting new background poster for rating. 
+				background = new JLabel(movieList
+						.getMoviePoster(
+								POSTERHEIGHT, 
+								POSTERWIDTH));
+			} else {
+				//setting personal rating for 
+				//currently displayed poster
+				// to the maximum star rating. 
+				movieList.setMovieScore(setLastMovieRating);
+				//getting new background poster for rating. 
+				background = new JLabel(movieList
+						.getMoviePoster(
+								POSTERHEIGHT, 
+								POSTERWIDTH));
+			}
 		} else {
 			background = new JLabel(movieList
 					.getMovieToWatch(
@@ -337,6 +346,7 @@ public final class CIS350TermProject {
 	    //f.setContentPane(background);
 		f.dispose();
 		initGUI();
+
 	}
 	
 	/**
@@ -360,6 +370,9 @@ public final class CIS350TermProject {
 		if (e.getSource() == genre) {
 			movieList.setGenre(genre.getSelectedItem().toString());
 		}
+		
+
+	    getNewBackGround(0);
 	}
 	
 	/**
@@ -396,7 +409,8 @@ public final class CIS350TermProject {
       	gbc.insets = new Insets(
       			SETTING_TOP_PAD,
       			RIGHT_ARROW_LEFT_PAD, 0, 0);	
-      	p.add(setting, gbc);
+      	// including the setting icon in the upper right corner
+      	//p.add(setting, gbc);
       	//setting the Padding associated with 
       	//proper placement of the right arrow icon      	
       	gbc.insets = new Insets(
@@ -442,6 +456,7 @@ public final class CIS350TermProject {
 	    //othersRating JComboBox with the appropriate font configuration
 	    genre = new JComboBox<>(movieList.genreList());
 	    Font font = new Font((String) "", Font.PLAIN, CBFONTSIZE);
+	    genre.setSelectedItem(movieList.getSelectGenre());
 	    genre.setFont(font);
 	    genre.addActionListener(new ActionListener() {
 			@Override
@@ -450,6 +465,7 @@ public final class CIS350TermProject {
 			}
 	    });
 	    era = new JComboBox<>(movieList.eraList());
+	    era.setSelectedItem(movieList.getSelectedEra());
 	    era.setFont(font);
 	    era.addActionListener(new ActionListener() {
 			@Override
@@ -458,6 +474,7 @@ public final class CIS350TermProject {
 			}
 	    });
 	    othersRating = new JComboBox<>(movieList.ratingList());
+	    othersRating.setSelectedItem(movieList.getSelectedRating());
 	    othersRating.setFont(font);
 	    othersRating.addActionListener(new ActionListener() {
 			@Override
@@ -496,5 +513,6 @@ public final class CIS350TermProject {
 	    gbc.insets = new Insets(P2_TOP_PAD, 0, 0, 0);
         f.add(p2, gbc);
 	    /*************************** section  end **********/
+
 	}
 }

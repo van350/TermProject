@@ -21,7 +21,7 @@ public class ModWatchListThread {
 		recID = listID;
 	};
 	
-	public void addToList(List<ListModifier> movies){
+	public void addToList(List<ListModifier> movies) {
 		
 		
 		queue.add(movies);
@@ -30,7 +30,7 @@ public class ModWatchListThread {
 				addToRec();
 			}
 		});*/
-		Thread t = new Thread( new Runnable() {
+		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
@@ -42,20 +42,19 @@ public class ModWatchListThread {
 		System.out.println("Thread Finished");
 	}
 	
-	public void addToRec(){
-		while ( queue.peek() != null ) { 
+	public void addToRec() {
+		while (queue.peek() != null) { 
 			
-			List<ListModifier> listDeQMovie = (List<ListModifier>)queue.remove();
-			for(ListModifier deQMovie : listDeQMovie){
+			List<ListModifier> listDeQMovie = (List<ListModifier>) queue.remove();
+			for (ListModifier deQMovie : listDeQMovie) {
 				
 				Boolean isOnList = movList.isMovieOnList(recID, deQMovie.getMovieID());
-				if(deQMovie.isAdd() && !isOnList){
+				if (deQMovie.isAdd() && !isOnList) {
 					System.out.println(deQMovie.getName() + "Is the last name in add");
-					movList.addMovieToList( session, recID, deQMovie.getMovieID() );
-					
-				}else if(!deQMovie.isAdd() && isOnList){
+					movList.addMovieToList(session, recID, deQMovie.getMovieID());
+				} else if (!deQMovie.isAdd() && isOnList) {
 					System.out.println(deQMovie.getName() + "Is the last name in take away");
-					movList.removeMovieFromList( session, recID, deQMovie.getMovieID() );
+					movList.removeMovieFromList(session, recID, deQMovie.getMovieID());
 				}
 			}
 		}

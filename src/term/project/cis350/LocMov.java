@@ -52,9 +52,9 @@ public class LocMov {
 		title = movie.getTitle();
 		this.id = movie.getId();
 		genreList = movie.getGenres();
-
-		//System.out.println(movie.getReleaseDate() + " Here's the release date");
-		releaseYear = Integer.parseInt((movie.getReleaseDate()).substring(0, 4));
+        String releaseDate = movie
+        		.getReleaseDate().substring(0, 4);
+		releaseYear = Integer.parseInt(releaseDate);
 		this.rating = movie.getVoteAverage();
 		genreIDList = setGenreIds(movie.getGenres());
 	}
