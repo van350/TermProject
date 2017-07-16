@@ -52,13 +52,9 @@ public class LocMov {
 		title = movie.getTitle();
 		this.id = movie.getId();
 		genreList = movie.getGenres();
-<<<<<<< HEAD
-		releaseYear = Integer.parseInt((movie.getReleaseDate())
-				.substring(0, 4));
-=======
+
 		//System.out.println(movie.getReleaseDate() + " Here's the release date");
 		releaseYear = Integer.parseInt((movie.getReleaseDate()).substring(0, 4));
->>>>>>> branch 'threadingIntroduced' of https://github.com/van350/TermProject.git
 		this.rating = movie.getVoteAverage();
 		genreIDList = setGenreIds(movie.getGenres());
 	}
@@ -129,7 +125,6 @@ public class LocMov {
 		return false;
 	}
 	
-<<<<<<< HEAD
 	/**
 	 * Gets the title of the movie.
 	 * 
@@ -137,11 +132,8 @@ public class LocMov {
 	 */
 	public String getTitle() {
 		return title;
-	}
-=======
-	public String getTitle(){
-		return title;
-	}
+
 	
->>>>>>> branch 'threadingIntroduced' of https://github.com/van350/TermProject.git
+
+	}
 }
