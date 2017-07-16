@@ -407,7 +407,8 @@ public final class CIS350TermProject {
       	gbc.insets = new Insets(
       			SETTING_TOP_PAD,
       			RIGHT_ARROW_LEFT_PAD, 0, 0);	
-      	p.add(setting, gbc);
+      	// including the setting icon in the upper right corner
+      	//p.add(setting, gbc);
       	//setting the Padding associated with 
       	//proper placement of the right arrow icon      	
       	gbc.insets = new Insets(
