@@ -310,12 +310,6 @@ public final class CIS350TermProject {
 		} else if (e.getSource() == setting) {
 			System.out.println("Hit Setting");
 		}
-		/*
-		ComboBoxModel<String> model = 
-				new DefaultComboBoxModel<String>(
-						movieList.genreListAvail());
-		genre.setModel(model);	
-		*/
 	    genre = new JComboBox<>(movieList.genreListAvail());
 		// setting active to false prevents loop associated with updating
 		// UI on comboBox item selected event
