@@ -384,7 +384,7 @@ public final class CIS350TermProject {
 				movieList.setRating(othersRating
 						.getSelectedItem().toString());
 			}
-			if (e.getSource() == genre) {
+			else /*(e.getSource() == genre)*/ {
 				movieList.setGenre(
 						genre.getSelectedItem()
 						.toString());
