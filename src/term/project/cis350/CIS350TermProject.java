@@ -356,11 +356,11 @@ public final class CIS350TermProject {
 		// setting active to false prevents 
 		//loop associated with updating
 		// UI on comboBox item selected event
-		/*
+		
 		active = false;
 	    genre.setSelectedItem(movieList.getSelectGenre());
 	    active = true;
-	    */
+	    
 	}
 	
 	/**
@@ -482,6 +482,11 @@ public final class CIS350TermProject {
 	    
 	    active = true;
 	    Font font = new Font((String) "", Font.PLAIN, CBFONTSIZE);
+
+		active = false;
+	    genre.setSelectedItem(movieList.getSelectGenre());
+	    active = true;
+	    
 	    genre.setFont(font);
 	    genre.addActionListener(new ActionListener() {
 			@Override
@@ -538,13 +543,13 @@ public final class CIS350TermProject {
 	    gbc.insets = new Insets(P2_TOP_PAD, 0, 0, 0);
         f.add(p2, gbc);
 	    /*************************** section  end **********/
-        /*
+        
 		// setting active to false 
 		//prevents loop associated with updating
 		// UI on comboBox item selected event
 		active = false;
 	    genre.setSelectedItem(movieList.getSelectGenre());
 	    active = true;
-	    */
+	    
 	}
 }
