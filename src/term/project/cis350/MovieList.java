@@ -9,7 +9,7 @@ import javax.swing.ImageIcon;
 /**
  * Aids in communication between controller and GUI.
  * 
- * @author Chris
+ * @author Chris 
  *
  */
 public class MovieList {
@@ -271,6 +271,10 @@ public class MovieList {
 		return false;
 	}
 	
+	/**
+	 * returns the list of available genres made in the search class.
+	 * @return	search.getGenreAvail	the list of available genres.
+	 */
 	public String[] genreListAvail() {
 		
 		return search.getGenreAvail();

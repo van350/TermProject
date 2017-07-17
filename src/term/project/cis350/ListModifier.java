@@ -5,7 +5,7 @@ package term.project.cis350;
  * Its integer MovieId, 'movID'
  * A boolean flag to indicate if this movie was rated highly, i.e. 'add'
  * A String that holds the movies title, 'title'
- * @author Siberian
+ * @author Siberian 
  *
  */
 public class ListModifier {
