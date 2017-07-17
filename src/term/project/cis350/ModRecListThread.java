@@ -1,5 +1,6 @@
 package term.project.cis350;
 
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -77,7 +78,7 @@ public class ModRecListThread {
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
+				
 				addToRec();
 			}
 		});

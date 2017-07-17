@@ -1,58 +1,7 @@
 package term.project.cis350;
 
+
 import java.util.ArrayList;
-
-/**
-import info.movito.themoviedbapi.model.changes.ChangesItems;
-
-
-import info.movito.themoviedbapi.model.Artwork;
-import info.movito.themoviedbapi.AbstractTmdbApi;
-
-import info.movito.themoviedbapi.model.core.*;
-import info.movito.themoviedbapi.tools.ApiUrl;
-import info.movito.themoviedbapi.tools.MovieDbException;
-import info.movito.themoviedbapi.model.Language;
-import org.json.CDL;
-import org.json.CDL;
-import org.json.Cookie;
-import org.json.Cookie;
-import org.json.CookieList;
-import org.json.CookieList;
-import org.json.HTTP;
-import org.json.HTTP;
-import org.json.HTTPTokener;
-import org.json.HTTPTokener;
-import org.json.JSONArray;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONException;
-import org.json.JSONML;
-import org.json.JSONML;
-import org.json.JSONObject;
-import org.json.JSONObject;
-import org.json.JSONString;
-import org.json.JSONString;
-import org.json.JSONStringer;
-import org.json.JSONStringer;
-import org.json.JSONTokener;
-import org.json.JSONTokener;
-import org.json.JSONWriter; 
-import org.json.JSONWriter;
-import org.json.XML;
-import org.json.XML;
-import org.json.XMLTokener;
-import org.json.XMLTokener;
-import info.movito.themoviedbapi.model.core.IdElement;
-import info.movito.themoviedbapi.model.people.PersonCast;
-import info.movito.themoviedbapi.model.MovieImages;
-import info.movito.themoviedbapi.model.people.PersonCrew;
-import info.movito.themoviedbapi.model.Reviews;
-import info.movito.themoviedbapi.model.Video;
-import info.movito.themoviedbapi.TmdbSearch;
-import info.movito.themoviedbapi.TmdbMovies.MovieMethod;
-import info.movito.themoviedbapi.TmdbAccount.MovieListResultsPage;
-*/
 
 
 //Let's make a change!     
@@ -61,9 +10,9 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-import info.movito.themoviedbapi.TmdbAccount.MediaType;
+
 import info.movito.themoviedbapi.model.config.Account;
-import info.movito.themoviedbapi.TmdbDiscover;
+
 import info.movito.themoviedbapi.TmdbLists;
 import info.movito.themoviedbapi.TmdbAccount;
 
@@ -71,16 +20,17 @@ import info.movito.themoviedbapi.TmdbAccount;
 import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbAuthentication;
 import info.movito.themoviedbapi.TmdbMovies;
+import info.movito.themoviedbapi.TmdbMovies.MovieMethod;
 import info.movito.themoviedbapi.model.Genre;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.config.TokenSession;
 import info.movito.themoviedbapi.model.core.AccountID;
-import info.movito.themoviedbapi.model.core.MovieResultsPage;
+
 import info.movito.themoviedbapi.model.core.SessionToken;
 
 import info.movito.themoviedbapi.model.MovieList;
 import java.awt.image.BufferedImage;
-import java.io.File;
+
 import java.io.IOException;
 import java.net.URL;
 
@@ -157,13 +107,13 @@ public class Search {
 	private TmdbLists listTool;
 	
 	/** sets the minimum movie date year. */
-	private static int minDate = 0;
+	private int minDate = 0;
 
 	/** sets the maximum movie date year. */
-	private static int maxDate = 5000;
+	private int maxDate = 5000;
 	
 	/** sets default and application minimum rating of interest. */
-	private static int minRating = 1;
+	private int minRating = 1;
 	
 	/**The minimum rating available. */
 	private static final int MIN_STARS = 1;
@@ -181,13 +131,13 @@ public class Search {
 	private static final String ALL_RATING 	= "Pick By Rating";
 	
 	/**holds the current era being searched for.*/
-	private static String curEra	= ALL_ERA;
+	private  String curEra	= ALL_ERA;
 	
 	/**holds the current genre being searched for.*/
-	private static String curGenre	= ALL_GENRE;
+	private  String curGenre	= ALL_GENRE;
 	
 	/**holds the current rating minimum being searched for.*/
-	private static String curRating = ALL_RATING;
+	private String curRating = ALL_RATING;
 	
 	
 	/** used as an increment for a date input parameter. */
@@ -216,15 +166,15 @@ public class Search {
 		act = tmdbAccount.getAccount(sessionToken);
 		actId = new AccountID(act.getId());
 		listTool = new TmdbLists(tmdbApi);
-		output = moviesTool.getPopularMovies("en-US", 0)
-				.getResults();
+		setOutput(moviesTool.getPopularMovies("en-US", 0)
+				.getResults());
 		
 		if (!recListCheck()) {
 			recId = listTool.createList(sessionToken, 
 					"CIS 350 Recommended Movie List", 
 					"Movies that we recommend");
-			output = moviesTool.getPopularMovies("en-US", 0)
-					.getResults();
+			setOutput(moviesTool.getPopularMovies("en-US", 0)
+					.getResults());
 			currentMovie = moviesTool.getPopularMovies("en-US", 0)
 					.getResults().get(1);
 			
@@ -305,7 +255,13 @@ public class Search {
 		updateSearch();
 		return true; // because successful
 	}
-
+	
+	
+/**
+ * Creates and returns the list of available genres.
+ * 
+ * @return genreList	The list of available genres.
+ */
 	public ArrayList<String> getGenreList() {
 		genreList = new ArrayList<String>(); 
 		genreList.add("action");
@@ -331,6 +287,12 @@ public class Search {
 		return genreList;
 	}
 	
+	/**
+	 * returns the list of available Genres.
+	 * 
+	 * @return	genreListAvail.toArray(new String[tempSize]);
+	 * 				the list of available genres.
+	 */
 	public String[] getGenreAvail() {
 		if (!genreListAvail.contains(ALL_GENRE)) {
 			genreListAvail.add(0, ALL_GENRE);
@@ -339,7 +301,16 @@ public class Search {
 		return genreListAvail.toArray(new String[tempSize]);
 	}
 	
-	public Boolean setEra(String era) {
+	
+	/**Sets the date range to be searched. 
+	 * If this fails, defaults to default search date range.
+	 * 
+	 * @param era The decade to be searched (lower bound. Ex, 
+	 * 1980 gives an upper bound of 1989).
+	 * @return	Boolean	returns true to show that the method 
+	 * has been successfully called.
+	 */
+	public Boolean setEra(final String era) {
 		curEra = era;
 		try {
 			minDate = Integer.parseInt(era.substring(0, 4));
@@ -352,11 +323,24 @@ public class Search {
 		updateSearch();
 		return true; // because successful
 	}
+	
+	
+	/**
+	 * getter for the current time frame being searched.
+	 * @return curEra	the current time frame being searched.
+	 */
 	public String getCurEra() {
 		return curEra;
 	}
 
-	public Boolean setRating(String rating) {
+	
+	/**
+	 * Sets the minimum acceptable rating for searches.
+	 * @param rating	the desired rating to search at or above.
+	 * @return	true	shows that the method has 
+	 * been successfully called.
+	 */
+	public Boolean setRating(final String rating) {
 		curRating = rating;
 		try {
 			minRating = Integer.parseInt(rating);
@@ -373,6 +357,10 @@ public class Search {
 		return true; // because successful
 	}
 	
+	/**
+	 * returns the current minimum acceptable rating to search with.
+	 * @return	curRating	The current minimum acceptable rating.
+	 */
 	public String getCurRating() {
 		return curRating;
 	}
@@ -393,15 +381,29 @@ public class Search {
 			if (nameCheck.equalsIgnoreCase(lists.getName())) {
 				recId = lists.getId();
 				if (lists.getItemCount() == 0) {
-					currentMovie = moviesTool.getPopularMovies("en-US", 0)
+					currentMovie = moviesTool
+							.getPopularMovies(
+									"en-US",
+									0)
 							.getResults().get(1);
-					output = moviesTool.getPopularMovies("en-US", 0)
-							.getResults();
+					setOutput(moviesTool
+							.getPopularMovies(
+									"en-US",
+									0)
+							.getResults());
 					
 					
 				} else {
-					for (MovieDb thisMovie : listTool.getList(recId).getItems()) {
-						MovieDb tMov = moviesTool.getMovie(thisMovie.getId(), "en-US", null);
+					for (MovieDb thisMovie : listTool
+							.getList(recId)
+							.getItems()) {
+						
+						MovieDb tMov = moviesTool
+								.getMovie(
+							thisMovie.getId(),
+							"en-US",
+							MovieMethod.values());
+						
 						recList.add(new LocMov(tMov));
 					}
 					updateSearch();
@@ -412,21 +414,41 @@ public class Search {
 		}
 		return false;
 	}
-	 
+	
+	/**
+	 *  Checks if the user has our watch later
+	 *   list already set up on their account.
+	 *  saves the list ID and its movies locally
+	 * @return boolean	returns true or false if the account has the
+	 *  list already set up or not.
+	 */
 	private boolean watchLaterCheck() {
 		String nameCheck;
-		for (MovieList lists: tmdbAccount.getLists(sessionToken, actId, "en-US", 0)) {
+		for (MovieList lists: tmdbAccount.getLists(
+				sessionToken, actId, "en-US", 0)) {
 			nameCheck = "CIS 350 Movies that interested you";
 			if (nameCheck.equalsIgnoreCase(lists.getName())) {
 				watchLater = lists.getId();
-				for (MovieDb thisMovie : listTool.getList(watchLater).getItems()) {
-					MovieDb tMov = moviesTool.getMovie(thisMovie.getId(), "en-US", null);
+				for (MovieDb thisMovie : listTool.getList(
+						watchLater).getItems()) {
+					
+					MovieDb tMov = moviesTool
+							.getMovie(
+								thisMovie
+								.getId(),
+								"en-US",
+								MovieMethod
+								.values());
+					
 					watchList.add(new LocMov(tMov));
-					// this assumes that watchLaterCheck is only instantiated 
-					// once with default all genre, era, and rating.
+					// this assumes that
+					//watchLaterCheck is only instantiated 
+					// once with default
+					//all genre, era, and rating.
 					watchSearched.add(new LocMov(tMov));
 				}
-				// this call prevents genre from populating with nothing.
+				// this call prevents genre
+				//from populating with nothing.
 				// if user does not use right or left arrows. 
 				updateRecFromRating(0);
 				return true;
@@ -435,18 +457,25 @@ public class Search {
 		return false;
 	}
 	
+	/**Chooses to either add a movie to watch later and
+	 * add similar movies to recommended list, or remove
+	 * movie from recommended as well as remove other 
+	 * similar movies.
+	 * 
+	 * 
+	 * @param rating	The interest rating given to a movie.
+	 */
 	public void updateRecFromRating(final int rating) {
 		if (rating >= MAX_STARS / 2) {
 			updateRecPositive(rating);
-		} else if(rating > 0){
+		} else if (rating > 0) {
 			updateRecNegative(rating);
 		}
 		genreListAvail.clear();
 		for (LocMov locMov : recList) {
 			updateGenreList(locMov);
 		}
-		int here = genreListAvail.size();
-		here = 54;
+		
 	}
 	
 	/**
@@ -461,7 +490,6 @@ public class Search {
 	 *  
 	 */
 	private void updateRecPositive(final int rating) {
-		//FIXME
 		manageList(rating, true);
 		updateOutput();
 	}
@@ -479,7 +507,8 @@ public class Search {
 	private void updateRecNegative(final int rating) {
 		manageList(rating, false);
 		/*
-		List<MovieDb> negRecs = moviesTool.getSimilarMovies(currentMovie.getId(), "en-US", 0).getResults();
+		List<MovieDb> negRecs = moviesTool.getSimilarMovies(
+		currentMovie.getId(), "en-US", 0).getResults();
 		for (MovieDb movie: negRecs) {
 			if (listTool.isMovieOnList(recId, movie.getId())) {
 				listTool.removeMovieFromList(sessionToken, 
@@ -488,7 +517,8 @@ public class Search {
 			
 		}
 		if(listTool.isMovieOnList(watchLater, currentMovie.getId())){
-			listTool.removeMovieFromList(sessionToken, watchLater, currentMovie.getId());
+			listTool.removeMovieFromList(
+			sessionToken, watchLater, currentMovie.getId());
 		}
 		rateMovie(rating);
 		*/
@@ -496,44 +526,79 @@ public class Search {
 	}
 	
 
-	private void manageList(final int rating, boolean isPositive) {
-
-		List<MovieDb> newRecs = moviesTool.getSimilarMovies(currentMovie.getId(), "en-US", 0).getResults();
+	/**Updates the watch later and recommendations lists based on 
+	 * the movie interest rating assigned by user.
+	 * 
+	 * @param rating The interest rating assigned to the movie.
+	 * @param isPositive	Whether the rating was positive or negative.
+	 */
+	private void manageList(final int rating, final boolean isPositive) {
+		//String curTitle = currentMovie.getTitle(); 
+		List<MovieDb> newRecs = moviesTool.getSimilarMovies(
+				currentMovie.getId(), "en-US", 0).getResults();
 		
-		/** stores an list of ListModifier objects to be used in remote thread*/
+		/** stores an list of ListModifier 
+		 * objects to be used in remote thread*/
 		List<ListModifier> listMod = new ArrayList<ListModifier>();
 		List<MovieDb> listMovieDb = new ArrayList<MovieDb>();
-		String curTitle = currentMovie.getTitle();
-		boolean isOnWatchList = listTool.isMovieOnList(watchLater,  currentMovie.getId());
 		
-		if (!listTool.isMovieOnList(watchLater, currentMovie.getId()) || !isPositive) {
+		
+		
+		/*
+		boolean isOnWatchList = listTool
+				.isMovieOnList(watchLater,
+						currentMovie.getId());
+		*/
+		if (!listTool.isMovieOnList(watchLater,
+				currentMovie.getId()) || !isPositive) {
 			if (listMod != null && listMod.size() > 0) {
 				listMod.clear();
 			}
 			
-			MovieDb tMov = moviesTool.getMovie(currentMovie.getId(), "en-US", null);
-			listMod.add(new ListModifier(tMov.getId(), isPositive, tMov.getTitle()));
+			MovieDb tMov = moviesTool
+					.getMovie(
+						currentMovie
+						.getId(),
+						"en-US",
+						MovieMethod.values());
+			
+			listMod.add(new ListModifier(
+					tMov.getId(), isPositive,
+					tMov.getTitle()));
 			modWatchRemote.addToList(listMod);
 			watchList.add(new LocMov(tMov));
-			//listTool.addMovieToList(sessionToken, watchLater, currentMovie.getId());
+			//listTool.addMovieToList(
+			//			sessionToken, watchLater,
+			//				currentMovie.getId());
 		}		
 		
 		for (MovieDb movie: newRecs) {
-			MovieDb tMov = moviesTool.getMovie(movie.getId(), "en-US", null);			
-			listMod.add(new ListModifier(tMov.getId(), isPositive, tMov.getTitle()));
+			MovieDb tMov = moviesTool
+					.getMovie(
+						movie.getId(),
+						"en-US",
+						MovieMethod.values());
+			
+			
+			listMod.add(new ListModifier(
+					tMov.getId(),
+					isPositive, tMov.getTitle()));
 			listMovieDb.add(tMov);
 		}
 		
 		int counter = 0;
+		/*
 		for (MovieDb movie: newRecs) {
 			float avgRate = movie.getVoteAverage();
 			String year = movie.getReleaseDate();
 			List<Genre> genres = movie.getGenres();
 			
-			
-			if (!recList.contains(listMod.get(counter)) && isPositive) {
+		*/
+			if (!recList.contains(
+					listMod.get(counter)) && isPositive) {
 				//MovieDb movDb = 
-				recList.add(new LocMov(listMovieDb.get(counter)));
+				recList.add(new LocMov(
+						listMovieDb.get(counter)));
 			}
 			counter++;
 			/*
@@ -541,7 +606,7 @@ public class Search {
 				listTool.addMovieToList(sessionToken, 
 						recId, movie.getId());
 			}*/			
-		}
+		//}
 
 		if (listMod.size() > 0) {
 			modRecRemote.addToList(listMod);
@@ -551,19 +616,14 @@ public class Search {
 	
 	/**
 	 * This method updates the search list and updates the output by 
-	 * calling private methods.
-	 * 
-	 * @param genre The genre of the movie in the form of a string. 
-	 * @param date the year that the movie was released.
-	 * @param avgRating the average rating score that the user wants.
+	 * calling a private method.
 	 * 
 	 * 
 	 */
 	private void updateSearch() {
-		//FIXME
+	
 		basicSearch();
-		
-		
+
 	}
 	
 	/**
@@ -573,7 +633,6 @@ public class Search {
 	 * 
 	 * */
 	private void updateOutput() {
-		//FIXME
 		//output.clear();
 		/*
 		for (MovieDb searchResultMovie: searchResults) {
@@ -589,13 +648,29 @@ public class Search {
 		*/
 		if (recSearched.size() > 0) {
 			/** random recommendation output index*/
-			int randRecSearch = recSearched.get(rando.nextInt(recSearched.size())).getid();
-			currentMovie = moviesTool.getMovie(randRecSearch, recId, null);
+			int randRecSearch = recSearched.get(
+					rando.nextInt(
+							recSearched
+							.size())).getid();
+			
+			
+			currentMovie = moviesTool.getMovie(
+					randRecSearch, 
+					recId,
+					MovieMethod.values());
 					
 		} else {
-			/** if recSearched has size 0 this populates it with the a m popular movie */
+			
+			
+			/** if recSearched has size 0 this
+			 *  populates it with the a m popular movie */
 			currentMovie = moviesTool.getPopularMovies("en-US", 0)
-					.getResults().get(rando.nextInt(moviesTool.getPopularMovies("en-US", 0).getResults().size()));
+					.getResults().get(rando.nextInt(
+							moviesTool
+							.getPopularMovies(
+									"en-US",
+									0)
+							.getResults().size()));
 		}
 		
 		
@@ -616,7 +691,8 @@ public class Search {
 		//		load-image-from-a-filepath-via-bufferedimage
 		BufferedImage picture = null;
 		
-		String filePath = "https://image.tmdb.org/t/p/w300/" + currentMovie.getPosterPath();
+		String filePath = "https://image.tmdb.org/t/p/w300/"
+		+ currentMovie.getPosterPath();
 		
 		try {
 			URL url = new URL(filePath);
@@ -648,11 +724,8 @@ public class Search {
 	}
 	
 	 /**
-	  * Uses the Discover feature of the API to generate the search list.
-	  * 
-	  * @param genre	the genre that is being searched for.
-	  * @param date		the year that is being searched for.
-	  * @param avgRating	the average rating that is being searched for.
+	  * Uses parameters saved within the 
+	  * class to narrow the results from the recommended list.
 	  */
 	private void basicSearch() {
 		
@@ -699,11 +772,13 @@ public class Search {
 		} else {
 			genreId = 0;
 		}
+		
+		/*
 		int releaseDate;
 		float rating;
 		output.clear();
 		boolean hasGenre = false;
-		
+		*/
 		if (recSearched.size() > 0) {
 			recSearched.clear();
 		}
@@ -712,58 +787,85 @@ public class Search {
 		}
 		
 		if (genreId != 0) {
-			//for(int i = 0; i < recList.size() /*listTool.getList(recId).getItemCount()*/; i++){
+			/*
+		}
+			for(int i = 0; i < recList.size() /*listTool
+			.getList(recId).getItemCount(); i++){
+				*/
+			//}
 			for (LocMov movie: recList) {
 				if (movie.containsGenre(genreId) 
 				&& movie.getRating() 	>= minRating 
 				&& movie.getYear() 		>= minDate 
 				&& movie.getYear() 		<= maxDate) {
-					/** assuming there are no duplicated in remote & local recList */
+					/** assuming there are
+					 * no duplicated in remote
+					 *  & local recList */
 					recSearched.add(movie);
-					System.out.println("Here's the current movies: " + movie.getTitle());
+					System.out.println(
+					"Here's the current movies: "
+					+ movie.getTitle());
 				} 
 
 			}
-			System.out.println("Number of recSearched = " + recSearched.size());
+			System.out.println(
+					"Number of recSearched "
+					+ "= " + recSearched.size());
 			for (LocMov movie: watchList) {
 				if (movie.containsGenre(genreId) 
 				   && movie.getRating() 	>= minRating
 				   && movie.getYear() 		>= minDate
 				   && movie.getYear() 		<= maxDate) {
-					/** assuming there are no duplicated in remote & local recList */
+					/** assuming there are 
+					 * no duplicated
+					 *  in remote & local recList */
 					watchSearched.add(movie);	
 				}
 			}
-			System.out.println("Number of watchSearched = " + watchSearched.size());
+			System.out.println("Number of watchSearched"
+					+ " = " + watchSearched.size());
 		} else {
 			for (LocMov movie: recList) {
 				if (movie.getRating() 	>= minRating
 				   && movie.getYear() 		>= minDate 
 				   && movie.getYear() 		<= maxDate) {
-					/** assuming there are no duplicated in remote & local recList */
-					recSearched.add(movie);					
+					/** assuming there are
+					 *  no duplicated in 
+					 *  remote & local recList */
+					recSearched.add(movie);
 				}
 		
 			}
-			System.out.println("Number of recSearched = " + recSearched.size());
+			System.out.println("Number of recSearched"
+					+ " = " + recSearched.size());
 			for (LocMov movie: watchList) {
 				if (movie.getRating() 	>= minRating
 				   && movie.getYear() 		>= minDate
 				   && movie.getYear() 		<= maxDate) {
-					/** assuming there are no duplicated in remote & local recList */
-					watchSearched.add(movie);					
+					/** assuming there
+					 *  are no duplicated
+					 *   in remote & local recList */
+					watchSearched.add(movie);
+
 				}
 			}
-			System.out.println("Number of watchSearched = " + watchSearched.size());
+			System.out.println(
+					"Number of watchSearched"
+					+ " = " + watchSearched.size());
 		}
 		updateOutput();
-		int here = 34;
-		here = 44;
+
 		
 		
 	}
 	
-	private void updateGenreList(LocMov movie) {
+	/**
+	 * adds genres to the list of available genres based on 
+	 * genres that haven't been added but apply to a movie.
+	 * 
+	 * @param movie	The movie that is being checked for new genres.
+	 */
+	private void updateGenreList(final LocMov movie) {
 		for (Genre genre : movie.getGenres()) {
 			if (!genreListAvail.contains(genre.getName())) {
 				genreListAvail.add(genre.getName());
@@ -782,17 +884,33 @@ public class Search {
 		
 		Random rando = new Random();
 		if (watchSearched.size() > 0) {
-			int randId =  watchSearched.get(rando.nextInt(watchSearched.size())).getid();
-			System.out.println(watchSearched.size() + " is the size of watchSearched");
-			currentMovie = moviesTool.getMovie(randId, watchLater, null);
-			System.out.println("This is the current MovieId : " + currentMovie.getId());
-			System.out.println("This is the randID MovieId : " + randId);
+			int randId =  watchSearched.get(
+					rando.nextInt(watchSearched
+							.size())).getid();
+			System.out.println(watchSearched.size()
+					+ " is the size of watchSearched");
+			
+			currentMovie = moviesTool
+					.getMovie(randId, 
+						watchLater, 
+						MovieMethod.values());
+			
+			System.out.println(
+					"This is the current MovieId : "
+			+ currentMovie.getId());
+			System.out.println(
+					"This is the randID MovieId : "
+			+ randId);
 		} else {
-				System.out.println("** WatchSearched Nothing to pick From **");
+				System.out.println(
+						"** WatchSearched "
+						+ "Nothing to pick From **");
 		}
 		
 		BufferedImage suggestedPoster = null;
-		String filePath = "https://image.tmdb.org/t/p/w300/" + currentMovie.getPosterPath();
+		String filePath = 
+				"https://image.tmdb.org/t/p/w300/"
+		+ currentMovie.getPosterPath();
 		
 		System.out.println(filePath);
 		try {
@@ -825,5 +943,23 @@ public class Search {
 		SessionToken sessionToken = 
 				new SessionToken(tokenSession.getSessionId());
 		return sessionToken;
+	}
+
+	/** Gets the output.
+	 * 
+	 * @return	output	The list of movies that are on
+	 *  the recommended list, selection limited by search parameters.
+	 */
+	public List<MovieDb> getOutput() {
+		return output;
+	}
+
+	/** Sets the output.
+	 * 
+	 * @param	output	The list of movies that are on
+	 *  the recommended list, selection limited by search parameters.
+	 */
+	public void setOutput(final List<MovieDb> output) {
+		this.output = output;
 	}
 }
