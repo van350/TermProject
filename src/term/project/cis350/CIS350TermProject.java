@@ -28,6 +28,11 @@ import javax.swing.WindowConstants;
 public final class CIS350TermProject {
 	
 	/**
+	 * flag controls if action listener is active
+	 */
+	private static Boolean active = true;
+	
+	/**
 	 * Unused Constructor.
 	 */
 	private CIS350TermProject() { }
@@ -263,6 +268,7 @@ public final class CIS350TermProject {
 	    f.setSize(width, height);
 	    f.setVisible(true);
 
+
 	}
 	/*
 	 * This function is used to initialize the movieList object as
@@ -304,11 +310,18 @@ public final class CIS350TermProject {
 		} else if (e.getSource() == setting) {
 			System.out.println("Hit Setting");
 		}
+		/*
 		ComboBoxModel<String> model = 
 				new DefaultComboBoxModel<String>(
 						movieList.genreListAvail());
-		genre.setModel(model);
-
+		genre.setModel(model);	
+		*/
+	    genre = new JComboBox<>(movieList.genreListAvail());
+		// setting active to false prevents loop associated with updating
+		// UI on comboBox item selected event
+		active = false;
+	    genre.setSelectedItem(movieList.getSelectGenre());
+	    active = true;
 	}
 	
 	/**
@@ -346,7 +359,11 @@ public final class CIS350TermProject {
 	    //f.setContentPane(background);
 		f.dispose();
 		initGUI();
-
+		// setting active to false prevents loop associated with updating
+		// UI on comboBox item selected event
+		active = false;
+	    genre.setSelectedItem(movieList.getSelectGenre());
+	    active = true;
 	}
 	
 	/**
@@ -360,19 +377,19 @@ public final class CIS350TermProject {
 	 *  determine what combo box entry was clicked.
 	 */
 	static void getComboBoxClickInfo(final ActionEvent e) {
-		if (e.getSource() == era) {
-			movieList.setEra(era.getSelectedItem().toString());
+		if (active) {
+			if (e.getSource() == era) {
+				movieList.setEra(era.getSelectedItem().toString());
+			}
+			if (e.getSource() == othersRating) {
+				movieList.setRating(othersRating
+						.getSelectedItem().toString());
+			}
+			if (e.getSource() == genre) {
+				movieList.setGenre(genre.getSelectedItem().toString());
+			}
+			getNewBackGround(0);
 		}
-		if (e.getSource() == othersRating) {
-			movieList.setRating(othersRating
-					.getSelectedItem().toString());
-		}
-		if (e.getSource() == genre) {
-			movieList.setGenre(genre.getSelectedItem().toString());
-		}
-		
-
-	    getNewBackGround(0);
 	}
 	
 	/**
@@ -455,8 +472,12 @@ public final class CIS350TermProject {
 	    //generating the genra, era, and 
 	    //othersRating JComboBox with the appropriate font configuration
 	    genre = new JComboBox<>(movieList.genreList());
-	    Font font = new Font((String) "", Font.PLAIN, CBFONTSIZE);
+		// setting active to false prevents loop associated with updating
+		// UI on comboBox item selected event
+		active = false;
 	    genre.setSelectedItem(movieList.getSelectGenre());
+	    active = true;
+	    Font font = new Font((String) "", Font.PLAIN, CBFONTSIZE);
 	    genre.setFont(font);
 	    genre.addActionListener(new ActionListener() {
 			@Override
@@ -513,6 +534,12 @@ public final class CIS350TermProject {
 	    gbc.insets = new Insets(P2_TOP_PAD, 0, 0, 0);
         f.add(p2, gbc);
 	    /*************************** section  end **********/
-
+        /*
+		// setting active to false prevents loop associated with updating
+		// UI on comboBox item selected event
+		active = false;
+	    genre.setSelectedItem(movieList.getSelectGenre());
+	    active = true;
+	    */
 	}
 }

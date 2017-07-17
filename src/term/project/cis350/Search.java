@@ -332,7 +332,9 @@ public class Search {
 	}
 	
 	public String[] getGenreAvail() {
-		genreListAvail.add(0, ALL_GENRE);
+		if (!genreListAvail.contains(ALL_GENRE)) {
+			genreListAvail.add(0, ALL_GENRE);
+		}
 		int tempSize = genreListAvail.size();
 		return genreListAvail.toArray(new String[tempSize]);
 	}
@@ -420,7 +422,13 @@ public class Search {
 				for (MovieDb thisMovie : listTool.getList(watchLater).getItems()) {
 					MovieDb tMov = moviesTool.getMovie(thisMovie.getId(), "en-US", null);
 					watchList.add(new LocMov(tMov));
+					// this assumes that watchLaterCheck is only instantiated 
+					// once with default all genre, era, and rating.
+					watchSearched.add(new LocMov(tMov));
 				}
+				// this call prevents genre from populating with nothing.
+				// if user does not use right or left arrows. 
+				updateRecFromRating(0);
 				return true;
 			}
 		}
@@ -430,7 +438,7 @@ public class Search {
 	public void updateRecFromRating(final int rating) {
 		if (rating >= MAX_STARS / 2) {
 			updateRecPositive(rating);
-		} else {
+		} else if(rating > 0){
 			updateRecNegative(rating);
 		}
 		genreListAvail.clear();
@@ -585,7 +593,7 @@ public class Search {
 			currentMovie = moviesTool.getMovie(randRecSearch, recId, null);
 					
 		} else {
-			/** if recSearched has size 0 this populates it with the a random popular movie */
+			/** if recSearched has size 0 this populates it with the a m popular movie */
 			currentMovie = moviesTool.getPopularMovies("en-US", 0)
 					.getResults().get(rando.nextInt(moviesTool.getPopularMovies("en-US", 0).getResults().size()));
 		}
@@ -775,7 +783,10 @@ public class Search {
 		Random rando = new Random();
 		if (watchSearched.size() > 0) {
 			int randId =  watchSearched.get(rando.nextInt(watchSearched.size())).getid();
+			System.out.println(watchSearched.size() + " is the size of watchSearched");
 			currentMovie = moviesTool.getMovie(randId, watchLater, null);
+			System.out.println("This is the current MovieId : " + currentMovie.getId());
+			System.out.println("This is the randID MovieId : " + randId);
 		} else {
 				System.out.println("** WatchSearched Nothing to pick From **");
 		}
