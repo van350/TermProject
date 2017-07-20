@@ -298,7 +298,8 @@ public class Search {
 			genreListAvail.add(0, ALL_GENRE);
 		}
 		int tempSize = genreListAvail.size();
-		return genreListAvail.toArray(new String[tempSize]);
+		return genreList.toArray(new String[tempSize]);
+		//genreListAvail.toArray(new String[tempSize]);
 	}
 	
 	
