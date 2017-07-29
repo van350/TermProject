@@ -14,6 +14,7 @@ import info.movito.themoviedbapi.model.MovieDb;
  *
  */
 public class LocMov {
+	private String posterPath;
 	
 	/**
 	 * Tracks the movie's ID for the Movie DB.
@@ -58,6 +59,8 @@ public class LocMov {
 		releaseYear = Integer.parseInt(releaseDate);
 		this.rating = movie.getVoteAverage();
 		genreIDList = setGenreIds(movie.getGenres());
+		posterPath = "https://image.tmdb.org/t/p/w300/"
+				+ movie.getPosterPath();
 	}
 	
 	/**
@@ -66,6 +69,15 @@ public class LocMov {
 	 */
 	public int getid() {
 		return id;
+	}
+	
+	/**
+	 * gets the URL where the poster is saved.
+	 * 
+	 * @return	posterPath the URL to the poster.
+	 */
+	public String getPoster(){
+		return posterPath;
 	}
 	
 	/**

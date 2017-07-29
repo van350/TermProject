@@ -1,5 +1,9 @@
 package term.project.cis350;
 
+import java.util.List;
+
+import info.movito.themoviedbapi.model.MovieDb;
+
 /**
  * The ListModifier class holds one movie in the form of:
  * Its integer MovieId, 'movID'
@@ -9,6 +13,7 @@ package term.project.cis350;
  *
  */
 public class ListModifier {
+	
 	/**
 	 * The integer equivalent of this movie, or 'movieID'.
 	 */
@@ -37,7 +42,13 @@ public class ListModifier {
 		movID = mId;
 		add = toAdd;
 		title = name;
+		
 	}
+	
+	
+	
+	
+	
 	
 	/**
 	 * getMovieID() returns this objects integer movieID.

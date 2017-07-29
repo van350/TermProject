@@ -43,6 +43,8 @@ import java.net.URL;
  */
 public class Search {
 	
+	
+	
 	/** used to adjust remote 
 	 * Recommendation list on movieDb via threading. */
 	private ModRecListThread modRecRemote;
@@ -51,7 +53,7 @@ public class Search {
 	private ModWatchListThread modWatchRemote;
 	
 	/** used to locally hold the recommended List. */
-	private List<LocMov> recList;
+	private static List<LocMov> recList;
 
 	/** used to locally hold the recommended refined List by search. */
 	private List<LocMov> recSearched;
@@ -100,7 +102,7 @@ public class Search {
 	private TmdbMovies moviesTool;
 	
 	/**Tracks the movie currently being displayed. */
-	private MovieDb currentMovie;
+	private LocMov currentMovie;
 
 	
 	/**Allows the use of TmdbLists class methods. */
@@ -155,6 +157,15 @@ public class Search {
 		recSearched = new ArrayList<LocMov>();
 		watchList = new ArrayList<LocMov>();
 		watchSearched = new ArrayList<LocMov>();
+		 long startTime;
+		
+		 long endTime;
+		
+		 long elapsedTime;
+		
+		
+		startTime = System.currentTimeMillis();
+		//System.out.println("start time is: " + startTime);
 		
 		System.out.println("IN connect");
 		tmdbApi = new TmdbApi("978613ab37cca0d42531d612540d5fac");
@@ -169,28 +180,53 @@ public class Search {
 		setOutput(moviesTool.getPopularMovies("en-US", 0)
 				.getResults());
 		
+		//System.out.println("start time is: " + startTime);
+		
 		if (!recListCheck()) {
 			recId = listTool.createList(sessionToken, 
 					"CIS 350 Recommended Movie List", 
 					"Movies that we recommend");
 			setOutput(moviesTool.getPopularMovies("en-US", 0)
 					.getResults());
-			currentMovie = moviesTool.getPopularMovies("en-US", 0)
+			
+			MovieDb newMov = moviesTool.getPopularMovies("en-US", 0)
 					.getResults().get(1);
 			
+			currentMovie = new LocMov(moviesTool.getMovie(newMov.getId(), "en-US", MovieMethod.values()));
+					
+			
 		}
+		
+		//System.out.println("start time is: " + startTime);
+		
+		
+		
 		if (!watchLaterCheck()) {
 			watchLater = listTool.createList(sessionToken, 
 					"CIS 350 Movies that interested you", 
 					"Movies that you rated highly");
 		}
 		
+		//System.out.println("start time is: " + startTime);
+		
+		
+		
+		//FIXME MODRECREMOTE
 		modRecRemote = new ModRecListThread(
-				listTool, sessionToken, recId);
+				listTool, sessionToken,
+				recId, tmdbAccount, moviesTool);
 		modWatchRemote = new ModWatchListThread(
 				listTool, sessionToken, watchLater);
 		
-		System.out.println("current movie ID: " + currentMovie.getId());
+		System.out.println("current movie ID: " + currentMovie.getid());
+		
+		
+		endTime = System.currentTimeMillis();
+		elapsedTime = endTime - startTime;
+		
+		System.out.println("Time cost to begin program is: " + elapsedTime);
+		//System.out.println("start time is: " + startTime);
+		//System.out.println("end Time is" + endTime);
 	}
 	
 	
@@ -325,7 +361,9 @@ public class Search {
 		return true; // because successful
 	}
 	
-	
+	public static void addToLocalRecList(LocMov movie){
+		recList.add(movie);
+	}
 	/**
 	 * getter for the current time frame being searched.
 	 * @return curEra	the current time frame being searched.
@@ -374,6 +412,14 @@ public class Search {
 	 *  
 	 *  */
 	private boolean recListCheck() {
+		 long startTime;
+			
+		 long endTime;
+		
+		 long elapsedTime;
+		startTime = System.currentTimeMillis();
+		
+		
 		
 		for (MovieList lists: tmdbAccount
 				.getLists(sessionToken, actId, "en-US", 0)) {
@@ -382,16 +428,35 @@ public class Search {
 			if (nameCheck.equalsIgnoreCase(lists.getName())) {
 				recId = lists.getId();
 				if (lists.getItemCount() == 0) {
-					currentMovie = moviesTool
+					
+					MovieDb newMov= moviesTool
 							.getPopularMovies(
-									"en-US",
-									0)
-							.getResults().get(1);
+							"en-US",
+							0).getResults().get(0);
+							
+							
+							
+							
+					
+					currentMovie = new LocMov(
+							moviesTool.getMovie(
+							newMov.getId(), 
+							"en-US", null));
+					
+					
+					
+					
+					
 					setOutput(moviesTool
 							.getPopularMovies(
 									"en-US",
 									0)
 							.getResults());
+					
+					
+					
+					
+					
 					
 					
 				} else {
@@ -409,10 +474,25 @@ public class Search {
 					}
 					updateSearch();
 				}
+				
+				endTime = System.currentTimeMillis();
+				elapsedTime = endTime - startTime;
+				System.out.println("Time cost to run recListCheck(true) is: " + elapsedTime);
+				
+				
+				
 				return true;
 			}
 			
 		}
+		
+		
+		endTime = System.currentTimeMillis();
+		elapsedTime = endTime - startTime;
+		System.out.println("Time cost to run recListCheck is: " + elapsedTime);
+		
+		
+		
 		return false;
 	}
 	
@@ -424,6 +504,14 @@ public class Search {
 	 *  list already set up or not.
 	 */
 	private boolean watchLaterCheck() {
+		 long startTime;
+			
+		 long endTime;
+		
+		 long elapsedTime;
+		startTime = System.currentTimeMillis();
+		
+
 		String nameCheck;
 		for (MovieList lists: tmdbAccount.getLists(
 				sessionToken, actId, "en-US", 0)) {
@@ -452,9 +540,24 @@ public class Search {
 				//from populating with nothing.
 				// if user does not use right or left arrows. 
 				updateRecFromRating(0);
+				
+				
+				endTime = System.currentTimeMillis();
+				elapsedTime = endTime - startTime;
+				//System.out.println("start time(watchLaterCheck) is: " + startTime);
+				System.out.println("Time cost to run watchLaterCheck is(true): " + elapsedTime);
+				
+				
 				return true;
 			}
 		}
+		endTime = System.currentTimeMillis();
+		elapsedTime = endTime - startTime;
+		//System.out.println("start time is(watchLaterCheck): " + startTime);
+		System.out.println("Time cost to run watchLaterCheck is(false): " + elapsedTime);
+		
+		
+		
 		return false;
 	}
 	
@@ -467,15 +570,30 @@ public class Search {
 	 * @param rating	The interest rating given to a movie.
 	 */
 	public void updateRecFromRating(final int rating) {
+		 long startTime;
+			
+		 long endTime;
+		
+		 long elapsedTime;
+		
+		startTime = System.currentTimeMillis();
+		
 		if (rating >= MAX_STARS / 2) {
 			updateRecPositive(rating);
 		} else if (rating > 0) {
 			updateRecNegative(rating);
 		}
 		genreListAvail.clear();
+		
+		/**   Removed because this method call wasn't useful and was taking a little time.
 		for (LocMov locMov : recList) {
 			updateGenreList(locMov);
 		}
+		*/
+		endTime = System.currentTimeMillis();
+		elapsedTime = endTime - startTime;
+		
+		System.out.println("Time cost to updateRecFromRating is: " + elapsedTime);
 		
 	}
 	
@@ -488,11 +606,30 @@ public class Search {
 	 *  @param rating The rating that the user gave the movie 
 	 *  (v1.0 is automatically full score)
 	 *  
-	 *  
+	 * FIXME	
+	 * 		this is taking a long time 
 	 */
 	private void updateRecPositive(final int rating) {
+		
+		
+		 long startTime;
+			
+		 long endTime;
+		
+		 long elapsedTime;
+		startTime = System.currentTimeMillis();
+		
+		
 		manageList(rating, true);
+		
+		endTime = System.currentTimeMillis();
+		elapsedTime = endTime - startTime;
+		System.out.println("Time cost to run updateRecPositive is: " + elapsedTime);
+		basicSearch();
 		updateOutput();
+		
+		
+		
 	}
 	
 	/**
@@ -506,6 +643,15 @@ public class Search {
 	 *  (v1.0 is automatically zero score)
 	 */
 	private void updateRecNegative(final int rating) {
+		
+		
+		 long startTime;
+			
+		 long endTime;
+		
+		 long elapsedTime;
+		startTime = System.currentTimeMillis();
+		
 		manageList(rating, false);
 		/*
 		List<MovieDb> negRecs = moviesTool.getSimilarMovies(
@@ -523,97 +669,79 @@ public class Search {
 		}
 		rateMovie(rating);
 		*/
+		basicSearch();
 		updateOutput();
+		endTime = System.currentTimeMillis();
+		elapsedTime = endTime - startTime;
+		System.out.println("Time cost to run updateRecNegative is: " + elapsedTime);
 	}
 	
 
 	/**Updates the watch later and recommendations lists based on 
 	 * the movie interest rating assigned by user.
 	 * 
+	 * 
+	 * FIXME
+	 * 		this is making other methods take a long time.
+	 * 
 	 * @param rating The interest rating assigned to the movie.
 	 * @param isPositive	Whether the rating was positive or negative.
 	 */
 	private void manageList(final int rating, final boolean isPositive) {
-		//String curTitle = currentMovie.getTitle(); 
-		List<MovieDb> newRecs = moviesTool.getSimilarMovies(
-				currentMovie.getId(), "en-US", 0).getResults();
+		 long startTime;
+			
+		 long endTime;
+		
+		 long elapsedTime;
+		
+		List<LocMov> newRecs;
+		
 		
 		/** stores an list of ListModifier 
 		 * objects to be used in remote thread*/
 		List<ListModifier> listMod = new ArrayList<ListModifier>();
-		List<MovieDb> listMovieDb = new ArrayList<MovieDb>();
-		
-		
-		
-		/*
-		boolean isOnWatchList = listTool
-				.isMovieOnList(watchLater,
-						currentMovie.getId());
-		*/
-		if (!listTool.isMovieOnList(watchLater,
-				currentMovie.getId()) || !isPositive) {
+
+		if (!watchList.contains(currentMovie) || !isPositive) {
 			if (listMod != null && listMod.size() > 0) {
 				listMod.clear();
 			}
 			
-			MovieDb tMov = moviesTool
-					.getMovie(
-						currentMovie
-						.getId(),
-						"en-US",
-						MovieMethod.values());
+			LocMov tMov = currentMovie;
 			
 			listMod.add(new ListModifier(
-					tMov.getId(), isPositive,
+					tMov.getid(), isPositive,
 					tMov.getTitle()));
+			
+			
 			modWatchRemote.addToList(listMod);
-			watchList.add(new LocMov(tMov));
-			//listTool.addMovieToList(
-			//			sessionToken, watchLater,
-			//				currentMovie.getId());
+			watchList.add(tMov);
+			
 		}		
 		
-		for (MovieDb movie: newRecs) {
-			MovieDb tMov = moviesTool
-					.getMovie(
-						movie.getId(),
-						"en-US",
-						MovieMethod.values());
-			
-			
-			listMod.add(new ListModifier(
-					tMov.getId(),
-					isPositive, tMov.getTitle()));
-			listMovieDb.add(tMov);
-		}
 		
-		int counter = 0;
-		/*
-		for (MovieDb movie: newRecs) {
-			float avgRate = movie.getVoteAverage();
-			String year = movie.getReleaseDate();
-			List<Genre> genres = movie.getGenres();
-			
-		*/
-			if (!recList.contains(
-					listMod.get(counter)) && isPositive) {
-				//MovieDb movDb = 
-				recList.add(new LocMov(
-						listMovieDb.get(counter)));
-			}
-			counter++;
-			/*
-			if (!listTool.isMovieOnList(recId, movie.getId())) {
-				listTool.addMovieToList(sessionToken, 
-						recId, movie.getId());
-			}*/			
-		//}
+		//FIXME
+		startTime = System.currentTimeMillis();
+		
+		modRecRemote.getSimilarMoviesTwo(currentMovie, isPositive, recList, rating);
+
+		endTime = System.currentTimeMillis();
+		elapsedTime = endTime - startTime;
+		System.out.println("Time cost to run manageList's line number 709 is: " + elapsedTime);
+		
+		
+		
 
 		if (listMod.size() > 0) {
 			modRecRemote.addToList(listMod);
 		}
-		rateMovie(rating);
+		//modRecRemote.rateMovie(currentMovie, rating);
+		
+		
 	}
+	
+	
+	
+	
 	
 	/**
 	 * This method updates the search list and updates the output by 
@@ -634,6 +762,13 @@ public class Search {
 	 * 
 	 * */
 	private void updateOutput() {
+		
+		 long startTime;
+			
+		 long endTime;
+		
+		 long elapsedTime;
+		startTime = System.currentTimeMillis();
 		//output.clear();
 		/*
 		for (MovieDb searchResultMovie: searchResults) {
@@ -647,34 +782,45 @@ public class Search {
 		int range = output.size();
 		System.out.println("The range if: " + range);
 		*/
+		
 		if (recSearched.size() > 0) {
+			
 			/** random recommendation output index*/
+			/**
 			int randRecSearch = recSearched.get(
 					rando.nextInt(
 							recSearched
 							.size())).getid();
+			*/
 			
-			
-			currentMovie = moviesTool.getMovie(
-					randRecSearch, 
-					recId,
-					MovieMethod.values());
+			currentMovie = recSearched.get(
+					rando.nextInt(
+							recSearched
+							.size()));
 					
 		} else {
 			
 			
 			/** if recSearched has size 0 this
 			 *  populates it with the a m popular movie */
-			currentMovie = moviesTool.getPopularMovies("en-US", 0)
-					.getResults().get(rando.nextInt(
-							moviesTool
-							.getPopularMovies(
-									"en-US",
-									0)
-							.getResults().size()));
+			
+			
+			
+			MovieDb newMov = moviesTool
+					.getPopularMovies(
+					"en-US",
+					0).getResults().get(1);
+			
+			currentMovie = new LocMov(
+					moviesTool.getMovie(
+					newMov.getId(), "en-US", MovieMethod.values()));
 		}
 		
-		
+		endTime = System.currentTimeMillis();
+		elapsedTime = endTime - startTime;
+		System.out.println("Time "
+				+ "cost to run updateOutput is: " 
+				+ elapsedTime);
 	}
 	
 	
@@ -687,13 +833,18 @@ public class Search {
 	 * 
 	 * */  
 	public BufferedImage getPoster() {
+		 long startTime;
+			
+		 long endTime;
+		
+		 long elapsedTime;
+		startTime = System.currentTimeMillis();
 		//thank you stackoverflow for the help
 		//https://stackoverflow.com/questions/19447104/
 		//		load-image-from-a-filepath-via-bufferedimage
 		BufferedImage picture = null;
 		
-		String filePath = "https://image.tmdb.org/t/p/w300/"
-		+ currentMovie.getPosterPath();
+		String filePath = currentMovie.getPoster();
 		
 		try {
 			URL url = new URL(filePath);
@@ -706,29 +857,28 @@ public class Search {
 					e.printStackTrace();    
 		
 		}     
+		endTime = System.currentTimeMillis();
+		elapsedTime = endTime - startTime;
+		System.out.println("Time cost to run getPoster is: " + elapsedTime);
+		
 		
 		return picture;
 	}
 	
 	
-	/**
-	 * Assigns the user's rating to the current movie.  
-	 * 
-	 * @param rating	the rating that the user wants to assign to 
-	 * 	the movie.
-	 * 
-	 * 
-	 * */
-	public void rateMovie(final int rating) {
-		tmdbAccount.postMovieRating(sessionToken,
-				currentMovie.getId(), rating);
-	}
+	
 	
 	 /**
 	  * Uses parameters saved within the 
 	  * class to narrow the results from the recommended list.
 	  */
 	private void basicSearch() {
+		 long startTime;
+			
+		 long endTime;
+		
+		 long elapsedTime;
+		startTime = System.currentTimeMillis();
 		
 		int genreId;
 		//System.out.println("Here");
@@ -854,9 +1004,12 @@ public class Search {
 					"Number of watchSearched"
 					+ " = " + watchSearched.size());
 		}
+		
 		updateOutput();
 
-		
+		endTime = System.currentTimeMillis();
+		elapsedTime = endTime - startTime;
+		System.out.println("Time cost to run basicSearch is: " + elapsedTime);
 		
 	}
 	
@@ -866,13 +1019,23 @@ public class Search {
 	 * 
 	 * @param movie	The movie that is being checked for new genres.
 	 */
+	
+	/** Removed to reduce time. This method wasn't useful because we check based on an already established list of genres.
 	private void updateGenreList(final LocMov movie) {
+		startTime = System.currentTimeMillis();
 		for (Genre genre : movie.getGenres()) {
 			if (!genreListAvail.contains(genre.getName())) {
 				genreListAvail.add(genre.getName());
 			}
 		}
+		
+		endTime = System.currentTimeMillis();
+		elapsedTime = endTime - startTime;
+		System.out.println("Time cost to run updateGenreList is: " + elapsedTime);
 	}
+	*/
+	
+	
 	
 	 /**
 	  * Retrieves a movie from the watch later list,
@@ -882,6 +1045,12 @@ public class Search {
 	  * @return suggestedPoster	The poster of the suggested movie.
 	  * */
 	public BufferedImage getMovieToWatch() {
+		 long startTime;
+			
+		 long endTime;
+		
+		 long elapsedTime;
+		startTime = System.currentTimeMillis();
 		
 		Random rando = new Random();
 		if (watchSearched.size() > 0) {
@@ -891,14 +1060,11 @@ public class Search {
 			System.out.println(watchSearched.size()
 					+ " is the size of watchSearched");
 			
-			currentMovie = moviesTool
-					.getMovie(randId, 
-						watchLater, 
-						MovieMethod.values());
+			currentMovie = watchList.get(randId);
 			
 			System.out.println(
 					"This is the current MovieId : "
-			+ currentMovie.getId());
+			+ currentMovie.getid());
 			System.out.println(
 					"This is the randID MovieId : "
 			+ randId);
@@ -911,7 +1077,7 @@ public class Search {
 		BufferedImage suggestedPoster = null;
 		String filePath = 
 				"https://image.tmdb.org/t/p/w300/"
-		+ currentMovie.getPosterPath();
+		+ currentMovie.getPoster();
 		
 		System.out.println(filePath);
 		try {
@@ -924,6 +1090,11 @@ public class Search {
 					e.printStackTrace();
 		
 		}     
+		endTime = System.currentTimeMillis();
+		elapsedTime = endTime - startTime;
+		System.out.println("Time cost to run getMovieToWatch is: " + elapsedTime);
+		
+		
 		return suggestedPoster;
 	}
 	
@@ -933,6 +1104,12 @@ public class Search {
 	 * @return sessionToken	the session login information.
 	 */
 	private SessionToken getSessionToken() {
+		 long startTime;
+			
+		 long endTime;
+		
+		 long elapsedTime;
+		startTime = System.currentTimeMillis();
 		TmdbAuthentication tmdbAuth = tmdbApi.getAuthentication();
 		TokenSession tokenSession = 
 				tmdbAuth.getSessionLogin("Schindld",
@@ -943,6 +1120,11 @@ public class Search {
 		
 		SessionToken sessionToken = 
 				new SessionToken(tokenSession.getSessionId());
+		
+		
+		endTime = System.currentTimeMillis();
+		elapsedTime = endTime - startTime;
+		System.out.println("Time cost to run getSessionToken is: " + elapsedTime);
 		return sessionToken;
 	}
 

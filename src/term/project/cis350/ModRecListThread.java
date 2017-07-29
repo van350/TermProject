@@ -1,12 +1,16 @@
 package term.project.cis350;
 
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-
+import info.movito.themoviedbapi.TmdbAccount;
 import info.movito.themoviedbapi.TmdbLists;
+import info.movito.themoviedbapi.TmdbMovies;
+import info.movito.themoviedbapi.TmdbMovies.MovieMethod;
+import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.core.SessionToken;
 
 /**
@@ -41,6 +45,10 @@ public class ModRecListThread {
 	 */
 	private String recID;
 	
+	private TmdbMovies moviesTool;
+	
+	private TmdbAccount tmdbAccount;
+	
 	/**
 	 * Constructor.
 	 * 
@@ -53,11 +61,118 @@ public class ModRecListThread {
 	 * @param listID			The ID of the recommended list.
 	 */
 	public ModRecListThread(final TmdbLists recList, 
-			final SessionToken thisSession, final String listID) { 
+			final SessionToken thisSession, final String listID, final TmdbAccount tmdbAccount, TmdbMovies moviesTool) { 
 		movList = recList;
 		session = thisSession;
 		recID = listID;
+		this.tmdbAccount = tmdbAccount;
+		this.moviesTool = moviesTool;
 	};
+	
+	
+	
+	
+	
+	public void getSimilarMoviesTwo(LocMov currentMovie, boolean isPositive, List<LocMov> recList, int rating){
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				
+				getSimilarMovies(currentMovie, isPositive, recList);
+				rateMovie(currentMovie, rating);
+				
+				
+			}
+			});
+		t.setDaemon(true);
+		t.start();
+		System.out.println("Thread Finished");
+		
+	}
+	
+	public void getSimilarMovies(LocMov currentMovie, boolean isPositive, List<LocMov> recList){
+		
+		
+		List<ListModifier> listMod = new ArrayList<ListModifier>();
+		List<MovieDb> listMovieDb = new ArrayList<MovieDb>();
+		
+		
+		
+		List<MovieDb> newRecs = moviesTool.getSimilarMovies(
+				currentMovie.getid(), "en-US", 0).getResults();
+		
+		
+		
+		for (MovieDb movie: newRecs) {
+			MovieDb tMov = moviesTool
+					.getMovie(
+						movie.getId(),
+						"en-US",
+						MovieMethod.values());
+			
+			
+			listMod.add(new ListModifier(
+					tMov.getId(),
+					isPositive, tMov.getTitle()));
+			listMovieDb.add(tMov);
+			
+			LocMov tmovie = new LocMov(tMov);
+		if (!recList.contains(tmovie)) {
+			Search.addToLocalRecList(tmovie);
+		}
+		}
+		
+		
+		if (listMod.size() > 0) {
+			addToList(listMod);
+		}
+		
+		
+		for (MovieDb movie: newRecs) {
+			
+			
+			
+			listMod.add(new ListModifier(
+					movie.getId(),
+					isPositive, movie.getTitle()));
+			
+			
+			//listMovieDb.add(movie);
+		}
+		
+		
+		
+		
+	}
+	
+	
+	
+	
+	
+	/**
+	 * Assigns the user's rating to the current movie.  
+	 * 
+	 * @param rating	the rating that the user wants to assign to 
+	 * 	the movie.
+	 * 
+	 * FIXME:
+	 * 		We ought to move this to the thread too.
+	 * */
+	public void rateMovie(final LocMov currentMovie, final int rating) {
+		 long startTime;
+			
+		 long endTime;
+		
+		 long elapsedTime;
+		startTime = System.currentTimeMillis();
+		tmdbAccount.postMovieRating(session,
+				currentMovie.getid(), rating);
+	
+		endTime = System.currentTimeMillis();
+		elapsedTime = endTime - startTime;
+		System.out.println("Time cost to run rateMovie is: " + elapsedTime);
+		
+	}
 	
 	/**
 	 * Creates and runs a thread that adds 
