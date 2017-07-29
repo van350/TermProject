@@ -1053,12 +1053,19 @@ public class Search {
 		startTime = System.currentTimeMillis();
 		
 		Random rando = new Random();
+		
+		
 		if (watchSearched.size() > 0) {
-			int randId =  watchSearched.get(
+			
+			int randId =  
 					rando.nextInt(watchSearched
-							.size())).getid();
+							.size());
+			
+			
+			
 			System.out.println(watchSearched.size()
 					+ " is the size of watchSearched");
+			
 			
 			currentMovie = watchList.get(randId);
 			

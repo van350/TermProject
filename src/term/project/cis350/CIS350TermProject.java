@@ -309,13 +309,17 @@ public final class CIS350TermProject {
 		} else if (e.getSource() == setting) {
 			System.out.println("Hit Setting");
 		}
-	    genre = new JComboBox<>(movieList.genreListAvail());
+		//FIXME commented out below
+	    //genre = new JComboBox<>(movieList.genreListAvail());
+		
 		// setting active to false prevents 
 	    //loop associated with updating
 		// UI on comboBox item selected event
-		active = false;
-	    genre.setSelectedItem(movieList.getSelectGenre());
-	    active = true;
+		
+		//FIXME commented out below
+		//active = false;
+	    //genre.setSelectedItem(movieList.getSelectGenre());
+	    //active = true;
 	}
 	
 	/**
@@ -357,10 +361,12 @@ public final class CIS350TermProject {
 		//loop associated with updating
 		// UI on comboBox item selected event
 		
+		//commented out below
+		/*
 		active = false;
 	    genre.setSelectedItem(movieList.getSelectGenre());
 	    active = true;
-	    
+	    */
 	}
 	
 	/**
@@ -381,9 +387,21 @@ public final class CIS350TermProject {
 						.toString());
 			}
 			if (e.getSource() == othersRating) {
+				String yyyyyyyy = 
+					othersRating.getSelectedItem().toString();
+				System.out.println(yyyyyyyy);
+				
+				
 				movieList.setRating(othersRating
 						.getSelectedItem().toString());
-			} else /*(e.getSource() == genre)*/ {
+				
+				
+			} else /*if(e.getSource() == genre) */ {
+				String xxxxxx = 
+					genre.getSelectedItem().toString();
+				System.out.println(xxxxxx);
+				
+				
 				movieList.setGenre(
 						genre.getSelectedItem()
 						.toString());
@@ -471,20 +489,23 @@ public final class CIS350TermProject {
 	      
 	    //generating the genra, era, and 
 	    //othersRating JComboBox with the appropriate font configuration
+	    Font font = new Font((String) "", Font.PLAIN, CBFONTSIZE);
 	    genre = new JComboBox<>(movieList.genreList());
 		// setting active to false 
 	    //prevents loop associated with updating
 		// UI on comboBox item selected event
+	    /**
 		active = false;
 		
 	    genre.setSelectedItem(movieList.getSelectGenre());
 	    
 	    active = true;
-	    Font font = new Font((String) "", Font.PLAIN, CBFONTSIZE);
+	    */
+	   
 
-		active = false;
+		//active = false;
 	    genre.setSelectedItem(movieList.getSelectGenre());
-	    active = true;
+	    //active = true;
 	    
 	    genre.setFont(font);
 	    genre.addActionListener(new ActionListener() {
@@ -546,9 +567,11 @@ public final class CIS350TermProject {
 		// setting active to false 
 		//prevents loop associated with updating
 		// UI on comboBox item selected event
+        //FIXME commented out next three lines - Dan S
+        /*
 		active = false;
 	    genre.setSelectedItem(movieList.getSelectGenre());
 	    active = true;
-	    
+	    */
 	}
 }
