@@ -118,6 +118,7 @@ public class ModRecListThread {
 			
 			LocMov tmovie = new LocMov(tMov);
 		if (!recList.contains(tmovie)) {
+			
 			Search.addToLocalRecList(tmovie);
 		}
 		}

@@ -694,7 +694,7 @@ public class Search {
 		
 		 long elapsedTime;
 		
-		List<LocMov> newRecs;
+		
 		
 		
 		/** stores an list of ListModifier 
@@ -722,7 +722,8 @@ public class Search {
 		//FIXME
 		startTime = System.currentTimeMillis();
 		
-		modRecRemote.getSimilarMoviesTwo(currentMovie, isPositive, recList, rating);
+		modRecRemote.getSimilarMoviesTwo(
+				currentMovie, isPositive, recList, rating);
 
 		endTime = System.currentTimeMillis();
 		elapsedTime = endTime - startTime;
