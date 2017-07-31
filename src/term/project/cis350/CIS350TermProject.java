@@ -309,14 +309,13 @@ public final class CIS350TermProject {
 		} else if (e.getSource() == setting) {
 			System.out.println("Hit Setting");
 		}
-		//FIXME commented out below
+		
 	    //genre = new JComboBox<>(movieList.genreListAvail());
 		
 		// setting active to false prevents 
 	    //loop associated with updating
 		// UI on comboBox item selected event
 		
-		//FIXME commented out below
 		//active = false;
 	    //genre.setSelectedItem(movieList.getSelectGenre());
 	    //active = true;
@@ -388,7 +387,8 @@ public final class CIS350TermProject {
 			}
 			if (e.getSource() == othersRating) {
 				String yyyyyyyy = 
-					othersRating.getSelectedItem().toString();
+					othersRating
+					.getSelectedItem().toString();
 				System.out.println(yyyyyyyy);
 				
 				
@@ -567,7 +567,7 @@ public final class CIS350TermProject {
 		// setting active to false 
 		//prevents loop associated with updating
 		// UI on comboBox item selected event
-        //FIXME commented out next three lines - Dan S
+     
         /*
 		active = false;
 	    genre.setSelectedItem(movieList.getSelectGenre());

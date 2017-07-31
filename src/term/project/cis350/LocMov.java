@@ -14,6 +14,9 @@ import info.movito.themoviedbapi.model.MovieDb;
  *
  */
 public class LocMov {
+	/**
+	 * tracks the URL path where the movie's poster can be found.
+	 */
 	private String posterPath;
 	
 	/**
@@ -76,7 +79,7 @@ public class LocMov {
 	 * 
 	 * @return	posterPath the URL to the poster.
 	 */
-	public String getPoster(){
+	public String getPoster() {
 		return posterPath;
 	}
 	

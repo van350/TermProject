@@ -1,8 +1,6 @@
 package term.project.cis350;
 
-import java.util.List;
 
-import info.movito.themoviedbapi.model.MovieDb;
 
 /**
  * The ListModifier class holds one movie in the form of:

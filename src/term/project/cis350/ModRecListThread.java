@@ -45,8 +45,14 @@ public class ModRecListThread {
 	 */
 	private String recID;
 	
+	/**
+	 * The tool used to manipulate movies on the DB.
+	 */
 	private TmdbMovies moviesTool;
 	
+	/**
+	 * The tool used to manipulate the user's account.
+	 */
 	private TmdbAccount tmdbAccount;
 	
 	/**
@@ -59,9 +65,17 @@ public class ModRecListThread {
 	 * @param thisSession		The session token.
 	 * 
 	 * @param listID			The ID of the recommended list.
+	 * 
+	 * @param tmdbAccount		The tool used to
+	 *  manipulate the user's account.
+	 * 
+	 * @param moviesTool		The tool used to
+	 *  manipulate movies on the DB.
 	 */
 	public ModRecListThread(final TmdbLists recList, 
-			final SessionToken thisSession, final String listID, final TmdbAccount tmdbAccount, TmdbMovies moviesTool) { 
+			final SessionToken thisSession, final String listID, 
+			final TmdbAccount tmdbAccount,
+			final TmdbMovies moviesTool) { 
 		movList = recList;
 		session = thisSession;
 		recID = listID;
@@ -72,13 +86,29 @@ public class ModRecListThread {
 	
 	
 	
-	
-	public void getSimilarMoviesTwo(LocMov currentMovie, boolean isPositive, List<LocMov> recList, int rating){
+	/**
+	 * Manages the thread that manipulates the DB to get similar 
+	 * movies saved both online and locally.
+	 * 
+	 * @param currentMovie	The movie that we 
+	 * are getting similar movies from.
+	 * 
+	 * @param isPositive	Was the user review positive or negative.
+	 * 
+	 * @param recList		The list of locally 
+	 * saved recommended movies.
+	 * 
+	 * @param rating		The rating that the user gave.
+	 */
+	public void getSimilarMoviesTwo(final LocMov currentMovie, 
+			final boolean isPositive, 
+			final List<LocMov> recList, final int rating) {
 		Thread t = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				
-				getSimilarMovies(currentMovie, isPositive, recList);
+				getSimilarMovies(currentMovie, 
+						isPositive, recList);
 				rateMovie(currentMovie, rating);
 				
 				
@@ -90,7 +120,14 @@ public class ModRecListThread {
 		
 	}
 	
-	public void getSimilarMovies(LocMov currentMovie, boolean isPositive, List<LocMov> recList){
+	/**
+	 * 
+	 * @param currentMovie The movie that is currently being judged.
+	 * @param isPositive	Was the user excited or not about this movie.
+	 * @param recList		The local list of recommended movies.
+	 */
+	public void getSimilarMovies(final LocMov currentMovie, 
+			final boolean isPositive, final List<LocMov> recList) {
 		
 		
 		List<ListModifier> listMod = new ArrayList<ListModifier>();
@@ -156,8 +193,8 @@ public class ModRecListThread {
 	 * @param rating	the rating that the user wants to assign to 
 	 * 	the movie.
 	 * 
-	 * FIXME:
-	 * 		We ought to move this to the thread too.
+	 * @param	currentMovie	The movie being rated.
+
 	 * */
 	public void rateMovie(final LocMov currentMovie, final int rating) {
 		 long startTime;
@@ -171,7 +208,8 @@ public class ModRecListThread {
 	
 		endTime = System.currentTimeMillis();
 		elapsedTime = endTime - startTime;
-		System.out.println("Time cost to run rateMovie is: " + elapsedTime);
+		System.out.println("Time cost to"
+				+ " run rateMovie is: " + elapsedTime);
 		
 	}
 	

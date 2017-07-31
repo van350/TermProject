@@ -21,7 +21,6 @@ import info.movito.themoviedbapi.TmdbApi;
 import info.movito.themoviedbapi.TmdbAuthentication;
 import info.movito.themoviedbapi.TmdbMovies;
 import info.movito.themoviedbapi.TmdbMovies.MovieMethod;
-import info.movito.themoviedbapi.model.Genre;
 import info.movito.themoviedbapi.model.MovieDb;
 import info.movito.themoviedbapi.model.config.TokenSession;
 import info.movito.themoviedbapi.model.core.AccountID;
@@ -53,7 +52,7 @@ public class Search {
 	private ModWatchListThread modWatchRemote;
 	
 	/** used to locally hold the recommended List. */
-	private static List<LocMov> recList;
+	private static List<LocMov> recList = new ArrayList<LocMov>();;
 
 	/** used to locally hold the recommended refined List by search. */
 	private List<LocMov> recSearched;
@@ -153,7 +152,7 @@ public class Search {
 	 * it finds the ID of the recommended movie list and saves it. */
 	public Search() {
 					
-		recList = new ArrayList<LocMov>();
+		//recList = new ArrayList<LocMov>();
 		recSearched = new ArrayList<LocMov>();
 		watchList = new ArrayList<LocMov>();
 		watchSearched = new ArrayList<LocMov>();
@@ -192,7 +191,10 @@ public class Search {
 			MovieDb newMov = moviesTool.getPopularMovies("en-US", 0)
 					.getResults().get(1);
 			
-			currentMovie = new LocMov(moviesTool.getMovie(newMov.getId(), "en-US", MovieMethod.values()));
+			currentMovie = new LocMov(
+					moviesTool.getMovie(
+					newMov.getId(), 
+					"en-US", MovieMethod.values()));
 					
 			
 		}
@@ -211,7 +213,7 @@ public class Search {
 		
 		
 		
-		//FIXME MODRECREMOTE
+		
 		modRecRemote = new ModRecListThread(
 				listTool, sessionToken,
 				recId, tmdbAccount, moviesTool);
@@ -224,7 +226,8 @@ public class Search {
 		endTime = System.currentTimeMillis();
 		elapsedTime = endTime - startTime;
 		
-		System.out.println("Time cost to begin program is: " + elapsedTime);
+		System.out.println("Time cost to begin program is: "
+		+ elapsedTime);
 		//System.out.println("start time is: " + startTime);
 		//System.out.println("end Time is" + endTime);
 	}
@@ -361,7 +364,12 @@ public class Search {
 		return true; // because successful
 	}
 	
-	public static void addToLocalRecList(LocMov movie){
+	
+	/**
+	 * Allows a movie to be added to recList.
+	 * @param movie Movie that is to be added to recList.
+	 */
+	public static void addToLocalRecList(final LocMov movie) {
 		recList.add(movie);
 	}
 	/**
@@ -429,7 +437,7 @@ public class Search {
 				recId = lists.getId();
 				if (lists.getItemCount() == 0) {
 					
-					MovieDb newMov= moviesTool
+					MovieDb newMov = moviesTool
 							.getPopularMovies(
 							"en-US",
 							0).getResults().get(0);
@@ -441,7 +449,8 @@ public class Search {
 					currentMovie = new LocMov(
 							moviesTool.getMovie(
 							newMov.getId(), 
-							"en-US", null));
+							"en-US", 
+							MovieMethod.values()));
 					
 					
 					
@@ -477,7 +486,9 @@ public class Search {
 				
 				endTime = System.currentTimeMillis();
 				elapsedTime = endTime - startTime;
-				System.out.println("Time cost to run recListCheck(true) is: " + elapsedTime);
+				System.out.println("Time cost to run "
+						+ "recListCheck(true) is: " 
+				+ elapsedTime);
 				
 				
 				
@@ -489,7 +500,8 @@ public class Search {
 		
 		endTime = System.currentTimeMillis();
 		elapsedTime = endTime - startTime;
-		System.out.println("Time cost to run recListCheck is: " + elapsedTime);
+		System.out.println("Time cost to "
+				+ "run recListCheck is: " + elapsedTime);
 		
 		
 		
@@ -544,8 +556,10 @@ public class Search {
 				
 				endTime = System.currentTimeMillis();
 				elapsedTime = endTime - startTime;
-				//System.out.println("start time(watchLaterCheck) is: " + startTime);
-				System.out.println("Time cost to run watchLaterCheck is(true): " + elapsedTime);
+				
+				System.out.println("Time cost to run"
+						+ " watchLaterCheck is(true): "
+						+ elapsedTime);
 				
 				
 				return true;
@@ -553,8 +567,9 @@ public class Search {
 		}
 		endTime = System.currentTimeMillis();
 		elapsedTime = endTime - startTime;
-		//System.out.println("start time is(watchLaterCheck): " + startTime);
-		System.out.println("Time cost to run watchLaterCheck is(false): " + elapsedTime);
+	
+		System.out.println("Time cost to run"
+				+ " watchLaterCheck is(false): " + elapsedTime);
 		
 		
 		
@@ -585,15 +600,12 @@ public class Search {
 		}
 		genreListAvail.clear();
 		
-		/**   Removed because this method call wasn't useful and was taking a little time.
-		for (LocMov locMov : recList) {
-			updateGenreList(locMov);
-		}
-		*/
+		
 		endTime = System.currentTimeMillis();
 		elapsedTime = endTime - startTime;
 		
-		System.out.println("Time cost to updateRecFromRating is: " + elapsedTime);
+		System.out.println("Time cost to "
+				+ "updateRecFromRating is: " + elapsedTime);
 		
 	}
 	
@@ -606,8 +618,7 @@ public class Search {
 	 *  @param rating The rating that the user gave the movie 
 	 *  (v1.0 is automatically full score)
 	 *  
-	 * FIXME	
-	 * 		this is taking a long time 
+	 *
 	 */
 	private void updateRecPositive(final int rating) {
 		
@@ -624,7 +635,9 @@ public class Search {
 		
 		endTime = System.currentTimeMillis();
 		elapsedTime = endTime - startTime;
-		System.out.println("Time cost to run updateRecPositive is: " + elapsedTime);
+		System.out.println(""
+				+ "Time cost to run "
+				+ "updateRecPositive is: " + elapsedTime);
 		basicSearch();
 		updateOutput();
 		
@@ -673,7 +686,8 @@ public class Search {
 		updateOutput();
 		endTime = System.currentTimeMillis();
 		elapsedTime = endTime - startTime;
-		System.out.println("Time cost to run updateRecNegative is: " + elapsedTime);
+		System.out.println("Time cost to"
+				+ " run updateRecNegative is: " + elapsedTime);
 	}
 	
 
@@ -681,8 +695,6 @@ public class Search {
 	 * the movie interest rating assigned by user.
 	 * 
 	 * 
-	 * FIXME
-	 * 		this is making other methods take a long time.
 	 * 
 	 * @param rating The interest rating assigned to the movie.
 	 * @param isPositive	Whether the rating was positive or negative.
@@ -719,7 +731,7 @@ public class Search {
 		}		
 		
 		
-		//FIXME
+		
 		startTime = System.currentTimeMillis();
 		
 		modRecRemote.getSimilarMoviesTwo(
@@ -727,7 +739,9 @@ public class Search {
 
 		endTime = System.currentTimeMillis();
 		elapsedTime = endTime - startTime;
-		System.out.println("Time cost to run manageList's line number 709 is: " + elapsedTime);
+		System.out.println("Time cost "
+				+ "to run manageList's "
+				+ "line number 709 is: " + elapsedTime);
 		
 		
 		
@@ -814,7 +828,8 @@ public class Search {
 			
 			currentMovie = new LocMov(
 					moviesTool.getMovie(
-					newMov.getId(), "en-US", MovieMethod.values()));
+					newMov.getId(), "en-US",
+					MovieMethod.values()));
 		}
 		
 		endTime = System.currentTimeMillis();
@@ -860,7 +875,8 @@ public class Search {
 		}     
 		endTime = System.currentTimeMillis();
 		elapsedTime = endTime - startTime;
-		System.out.println("Time cost to run getPoster is: " + elapsedTime);
+		System.out.println("Time cost to "
+				+ "run getPoster is: " + elapsedTime);
 		
 		
 		return picture;
@@ -1010,7 +1026,8 @@ public class Search {
 
 		endTime = System.currentTimeMillis();
 		elapsedTime = endTime - startTime;
-		System.out.println("Time cost to run basicSearch is: " + elapsedTime);
+		System.out.println("Time cost to "
+				+ "run basicSearch is: " + elapsedTime);
 		
 	}
 	
@@ -1021,7 +1038,9 @@ public class Search {
 	 * @param movie	The movie that is being checked for new genres.
 	 */
 	
-	/** Removed to reduce time. This method wasn't useful because we check based on an already established list of genres.
+	/** Removed to reduce time. This 
+	 * method wasn't useful because we check 
+	 * based on an already established list of genres.
 	private void updateGenreList(final LocMov movie) {
 		startTime = System.currentTimeMillis();
 		for (Genre genre : movie.getGenres()) {
@@ -1032,7 +1051,8 @@ public class Search {
 		
 		endTime = System.currentTimeMillis();
 		elapsedTime = endTime - startTime;
-		System.out.println("Time cost to run updateGenreList is: " + elapsedTime);
+		System.out.println("Time cost
+		 to run updateGenreList is: " + elapsedTime);
 	}
 	*/
 	
@@ -1100,7 +1120,8 @@ public class Search {
 		}     
 		endTime = System.currentTimeMillis();
 		elapsedTime = endTime - startTime;
-		System.out.println("Time cost to run getMovieToWatch is: " + elapsedTime);
+		System.out.println("Time cost"
+				+ " to run getMovieToWatch is: " + elapsedTime);
 		
 		
 		return suggestedPoster;
@@ -1132,7 +1153,9 @@ public class Search {
 		
 		endTime = System.currentTimeMillis();
 		elapsedTime = endTime - startTime;
-		System.out.println("Time cost to run getSessionToken is: " + elapsedTime);
+		System.out.println("Time "
+				+ "cost to run "
+				+ "getSessionToken is: " + elapsedTime);
 		return sessionToken;
 	}
 
