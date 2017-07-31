@@ -131,7 +131,7 @@ public class ModRecListThread {
 		
 		
 		List<ListModifier> listMod = new ArrayList<ListModifier>();
-		List<MovieDb> listMovieDb = new ArrayList<MovieDb>();
+		//List<MovieDb> listMovieDb = new ArrayList<MovieDb>();
 		
 		
 		
@@ -151,7 +151,7 @@ public class ModRecListThread {
 			listMod.add(new ListModifier(
 					tMov.getId(),
 					isPositive, tMov.getTitle()));
-			listMovieDb.add(tMov);
+			//listMovieDb.add(tMov);
 			
 			LocMov tmovie = new LocMov(tMov);
 		if (!recList.contains(tmovie)) {
