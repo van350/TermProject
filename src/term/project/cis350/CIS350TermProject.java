@@ -151,11 +151,9 @@ public final class CIS350TermProject {
 	 */
 	static final int LEFT_ARROW_RIGHT_PAD = 90;
 	
-	
-	
-/**
- * This Panel holds the comboBoxes and JButton.
- */
+	/**
+ 	 * This Panel holds the comboBoxes and JButton.
+ 	 */
 	private static JPanel p2;
 	
 	/**
@@ -280,6 +278,7 @@ public final class CIS350TermProject {
         f.setLocationRelativeTo(null);
 	    f.setSize(width, height);
 	    f.setVisible(true);
+	    f.setResizable(false);
 	    
 	    if(wasJFrameInit){
 	    	f.setLocation(fLocation.x, fLocation.y);
