@@ -1,9 +1,12 @@
 package term.project.cis350;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -42,11 +45,6 @@ public final class CIS350TermProject {
 	private static MovieList movieList;	
 	
 	/**
-	 * derived from standard insert 7.28" Height.
-	 */
-	static final int POSTERHEIGHT 	= 728 * 2 / 3;
-	
-	/**
 	 * Used to scale preferred panel's height as needed.
 	 */
 	static final int HEIGHTFACTOR 	= 1;
@@ -54,8 +52,15 @@ public final class CIS350TermProject {
 	/**
 	 * derived from standard insert 4.94" wide.
 	 */
-	static final int POSTERWIDTH  	= 
-				(int) (POSTERHEIGHT / 1.47);
+	static final int POSTERWIDTH  	= 424;
+
+	
+	static final int ELEMENTHEIGHT 	= 0;
+	/**
+	 * derived from standard insert 7.28" Height plus 
+	 * JComboBox and JButton heights. 
+	 */
+	static final int POSTERHEIGHT 	= (int)(POSTERWIDTH * 1.47) + ELEMENTHEIGHT;
 	
 	/**
 	 * Used to scale preferred panel's width as needed.
@@ -72,6 +77,15 @@ public final class CIS350TermProject {
 	 */
 	private static JFrame f;
 	
+	/**
+	 * holds the boolean associated with initial application launch
+	 */
+	static boolean wasJFrameInit = false;
+	
+	/**
+	 * Holds the f variable location prior to guiInit() call
+	 */
+	static Point fLocation = new Point(0,0);
 	/**
 	 * defines padding around 'f' JFrame.
 	 */
@@ -95,7 +109,7 @@ public final class CIS350TermProject {
 	/**
 	 * Controls Left Padding for proper Right Arrow icon placement.
 	 */
-	static final int RIGHT_ARROW_LEFT_PAD = 0;
+	static final int RIGHT_ARROW_LEFT_PAD = 100;
 	
 	/**
 	 * Holds the setting menu Icon image.
@@ -112,9 +126,9 @@ public final class CIS350TermProject {
 	 */
 	private static JLabel leftArrow;
 	
-/**
- * Controls the top padding for right and left arrow image icons.
- */
+	/**
+ 	 * Controls the top padding for right and left arrow image icons.
+ 	 */
 	static final int RL_ARROW_TOP_PAD = 100;
 	
 	/**
@@ -147,7 +161,7 @@ public final class CIS350TermProject {
 	/**
 	 * Bottom Padding for 'P2' proper placement.
 	 */
-	static final int P2_TOP_PAD = 225 -  RL_ARROW_TOP_PAD;			
+	static final int P2_TOP_PAD = 397 -  RL_ARROW_TOP_PAD;//225 -  RL_ARROW_TOP_PAD;			
 	
 	/**
 	 *  Holds genre related information for movie selection.
@@ -205,7 +219,7 @@ public final class CIS350TermProject {
 	 * JFrame. 
 	 */
 	private static void initGUI() {
-		
+
 		//Initiating the first movie poster
 	    background = new JLabel(movieList
 	    		.getMoviePoster(POSTERHEIGHT, POSTERWIDTH));
@@ -266,7 +280,13 @@ public final class CIS350TermProject {
         f.setLocationRelativeTo(null);
 	    f.setSize(width, height);
 	    f.setVisible(true);
-
+	    
+	    if(wasJFrameInit){
+	    	f.setLocation(fLocation.x, fLocation.y);
+	    }else {
+	    	Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+	    	f.setLocation(dim.width/2-f.getSize().width/2, dim.height/2-f.getSize().height/2);
+	    }
 
 	}
 	/*
@@ -350,6 +370,13 @@ public final class CIS350TermProject {
 					.getMovieToWatch(
 							POSTERHEIGHT, 
 							POSTERWIDTH));
+		}
+		// used to retain the JFrame location prior to 
+		// disposing of it. 
+		if(f != null) {
+			wasJFrameInit = true;
+			System.out.println("You are in here");
+			fLocation = f.getLocationOnScreen();
 		}
 		//f.repaint();
 		//background.repaint();
@@ -485,6 +512,7 @@ public final class CIS350TermProject {
 	    p2.setPreferredSize(new Dimension((int) (
 	    		POSTERWIDTH * WIDTHFACTOR), 
 	    		(int) (POSTERHEIGHT * HEIGHTFACTOR)));
+	    p2.setBackground(Color.green);
 	    p2.setOpaque(false);
 	      
 	    //generating the genra, era, and 
@@ -554,8 +582,8 @@ public final class CIS350TermProject {
 	    gbc.gridx = horiDist + 1;
 	    gbc.gridy = vertDist;
         p2.add(othersRating, gbc);
-	    gbc.gridx = horiDist;
-	    gbc.gridy = vertDist + 1;
+	    gbc.gridx = horiDist + 2;
+	    gbc.gridy = vertDist;// + 1;
 	    p2.add(getSuggestion, gbc);
 
 	    gbc.gridx = 0;
