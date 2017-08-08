@@ -54,13 +54,11 @@ public final class CIS350TermProject {
 	 */
 	static final int POSTERWIDTH  	= 424;
 
-	
-	static final int ELEMENTHEIGHT 	= 0;
 	/**
 	 * derived from standard insert 7.28" Height plus 
 	 * JComboBox and JButton heights. 
 	 */
-	static final int POSTERHEIGHT 	= (int)(POSTERWIDTH * 1.47) + ELEMENTHEIGHT;
+	static final int POSTERHEIGHT 	= (int) (POSTERWIDTH * 1.47);
 	
 	/**
 	 * Used to scale preferred panel's width as needed.
@@ -78,14 +76,14 @@ public final class CIS350TermProject {
 	private static JFrame f;
 	
 	/**
-	 * holds the boolean associated with initial application launch
+	 * holds the boolean associated with initial application launch.
 	 */
-	static boolean wasJFrameInit = false;
+	private static boolean wasJFrameInit = false;
 	
 	/**
-	 * Holds the f variable location prior to guiInit() call
+	 * Holds the f variable location prior to guiInit() call.
 	 */
-	static Point fLocation = new Point(0,0);
+	private static Point fLocation = new Point(0, 0);
 	/**
 	 * defines padding around 'f' JFrame.
 	 */
@@ -159,7 +157,7 @@ public final class CIS350TermProject {
 	/**
 	 * Bottom Padding for 'P2' proper placement.
 	 */
-	static final int P2_TOP_PAD = 397 -  RL_ARROW_TOP_PAD;//225 -  RL_ARROW_TOP_PAD;			
+	static final int P2_TOP_PAD = 397 -  RL_ARROW_TOP_PAD;	
 	
 	/**
 	 *  Holds genre related information for movie selection.
@@ -280,11 +278,13 @@ public final class CIS350TermProject {
 	    f.setVisible(true);
 	    f.setResizable(false);
 	    
-	    if(wasJFrameInit){
+	    if (wasJFrameInit) {
 	    	f.setLocation(fLocation.x, fLocation.y);
-	    }else {
+	    } else {
 	    	Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-	    	f.setLocation(dim.width/2-f.getSize().width/2, dim.height/2-f.getSize().height/2);
+	    	int xLoc = dim.width / 2 - f.getSize().width / 2;
+	    	int yLoc = dim.height / 2 - f.getSize().height / 2;
+	    	f.setLocation(xLoc, yLoc);
 	    }
 
 	}
@@ -372,7 +372,7 @@ public final class CIS350TermProject {
 		}
 		// used to retain the JFrame location prior to 
 		// disposing of it. 
-		if(f != null) {
+		if (f != null) {
 			wasJFrameInit = true;
 			System.out.println("You are in here");
 			fLocation = f.getLocationOnScreen();
@@ -582,7 +582,7 @@ public final class CIS350TermProject {
 	    gbc.gridy = vertDist;
         p2.add(othersRating, gbc);
 	    gbc.gridx = horiDist + 2;
-	    gbc.gridy = vertDist;// + 1;
+	    gbc.gridy = vertDist;
 	    p2.add(getSuggestion, gbc);
 
 	    gbc.gridx = 0;
