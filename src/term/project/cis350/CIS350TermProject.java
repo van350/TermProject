@@ -376,11 +376,11 @@ public final class CIS350TermProject {
 			wasJFrameInit = true;
 			System.out.println("You are in here");
 			fLocation = f.getLocationOnScreen();
+			//f.repaint();
+			//background.repaint();
+		    //f.setContentPane(background);
+			f.dispose();
 		}
-		//f.repaint();
-		//background.repaint();
-	    //f.setContentPane(background);
-		f.dispose();
 		initGUI();
 		// setting active to false prevents 
 		//loop associated with updating
