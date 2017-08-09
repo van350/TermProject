@@ -378,7 +378,7 @@ public final class CIS350TermProject {
 			fLocation = f.getLocationOnScreen();
 			f.dispose();
 		}
-		initGUI();
+		initGUI(); 
 		// setting active to false prevents 
 		//loop associated with updating
 		// UI on comboBox item selected event
